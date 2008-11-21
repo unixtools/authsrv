@@ -215,7 +215,7 @@ struct DataBlock *FetchHostKey(void)
 {
 	struct DataBlock *key = NULL;
 
-	key = FileToDataBlock(DATADIR "/host-key");
+	key = FileToDataBlock(DATADIR DIRSEP "host-key");
 	if ( key->data[key->length] == '\n' )
 	{
 		key->data[key->length] = '\0';
