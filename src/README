@@ -1,0 +1,17 @@
+Need:
+-----
+Ability to securely store password locally on machine
+
+	
+Approach:
+---------
+Encrypted result is stored in file whose name is stored in a directory structure of owner/userid/instance
+
+
+Assumptions:
+------------
+Security: Access to host-key file is necessary to decrypt 
+
+
+
+Please see blowfish/COPYRIGHT for license information for the included blowfish library.
