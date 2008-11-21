@@ -2,7 +2,7 @@ BINDIR=/usr/bin
 DATADIR=/usr/share/authsrv
 
 LIBS = -L../blowfish -lblowfish
-INC = -I../blowfish
+INC = -I../blowfish -I../common
 CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
 
 BFLIB = ../blowfish/libblowfish.a
@@ -20,35 +20,35 @@ $(BFLIB):
 auth: $(BFLIB) auth.o subs.o
 	$(CC) -o auth auth.o subs.o $(LIBS) `krb5-config --libs`
 
-auth.o: auth.c
-	$(CC) $(INC) `krb5-config --cflags` -c -o auth.o auth.c
+auth.o: ../common/auth.c
+	$(CC) $(INC) `krb5-config --cflags` -c -o auth.o ../common/auth.c
 
 encrypt: $(BFLIB) encrypt.o subs.o
 	$(CC) -o encrypt encrypt.o subs.o $(LIBS)
 
-encrypt.o: encrypt.c
-	$(CC) $(INC) -c encrypt.c
+encrypt.o: ../common/encrypt.c
+	$(CC) $(INC) -c ../common/encrypt.c
 
 decrypt: $(BFLIB) decrypt.o subs.o
 	$(CC) -o decrypt decrypt.o subs.o $(LIBS)
 
-decrypt.o: decrypt.c
-	$(CC) $(INC) -c decrypt.c
+decrypt.o: ../common/decrypt.c
+	$(CC) $(INC) -c ../common/decrypt.c
 
 delete: $(BFLIB) delete.o subs.o
 	$(CC) -o delete delete.o subs.o $(LIBS)
 
-delete.o: delete.c
-	$(CC) $(INC) -c delete.c
+delete.o: ../common/delete.c
+	$(CC) $(INC) -c ../common/delete.c
 
 list: $(BFLIB) list.o subs.o
 	$(CC) -o list list.o subs.o $(LIBS)
 
-list.o: list.c
-	$(CC) $(INC) -c list.c
+list.o: ../common/list.c
+	$(CC) $(INC) -c ../common/list.c
 
-subs.o: subs.c
-	$(CC) $(INC) -c subs.c
+subs.o: ../common/subs.c
+	$(CC) $(INC) -c ../common/subs.c
 
 install: encrypt decrypt delete list dirs key
 	strip encrypt
@@ -77,6 +77,6 @@ $(DATADIR)/host-key:
 
 clean:
 	rm -f *.a *.o 
-	rm -f encrypt decrypt delete list
+	rm -f encrypt decrypt delete list auth
 	cd ../blowfish && $(MAKE) clean
 
