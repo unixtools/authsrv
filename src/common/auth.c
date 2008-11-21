@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#ifndef WINDOWS
 #include <pwd.h>
+#endif
+#include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
+#ifndef WINDOWS
 #include <syslog.h>
 #include <krb5.h>
+#endif
 
 krb5_ccache krb5util_ccache = NULL;
 krb5_context krb5util_context;

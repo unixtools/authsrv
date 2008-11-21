@@ -4,9 +4,12 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifndef WINDOWS
 #include <pwd.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
+#include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
 

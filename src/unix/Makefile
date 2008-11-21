@@ -3,7 +3,7 @@ DATADIR=/usr/share/authsrv
 
 LIBS = -L../blowfish -lblowfish
 INC = -I../blowfish -I../common
-CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\" -DDIRSEP=\"/\"
+CC = gcc -g -O2 -Wall 
 
 BFLIB = ../blowfish/libblowfish.a
 

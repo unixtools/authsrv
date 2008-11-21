@@ -1,10 +1,13 @@
 #include <stdio.h>
+#ifndef WINDOWS
 #include <pwd.h>
+#endif
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <syslog.h>
+#include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
 

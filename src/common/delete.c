@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>
+#include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
 

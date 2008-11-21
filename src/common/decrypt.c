@@ -2,7 +2,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#ifndef WINDOWS
 #include <pwd.h>
+#endif
+#include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
 
