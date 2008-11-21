@@ -1,0 +1,1 @@
+perl %windir%\authsrv.pl
