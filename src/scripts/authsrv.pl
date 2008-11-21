@@ -1,5 +1,19 @@
 #!/usr/bin/perl
+
+# Begin-Doc
+# Type: script
+# Name: authsrv.pl
+# Description: simple text based authsrv UI
+# End-Doc
+
+use strict;
 $| = 1;
+
+# Make sure that authsrv tools are in the path
+$ENV{PATH} = "/usr/bin";
+
+my $STASHCOUNT;
+my %STASHED;
 
 &get_list();
 while (1) {
@@ -9,7 +23,7 @@ while (1) {
             "Note: On windows, all stashes are merged into 'common' owner.\n";
     }
     print "Action: (S)tash (D)elete (L)ist (Q)uit: ";
-    chomp( $line = <STDIN> );
+    chomp( my $line = <STDIN> );
     last if ( !defined($line) );
     $line = lc $line;
 
@@ -26,15 +40,18 @@ while (1) {
         last;
     }
 }
-
 print "\n";
 
+# Begin-Doc
+# Name: get_list
+# Type: function
+# Description: retrieve current list of stashes into global hash
+# End-Doc
 sub get_list {
-    my $line;
     open( CMDIN, "authsrv-list|" );
     $STASHCOUNT = 0;
     %STASHED    = ();
-    while ( chomp( $line = <CMDIN> ) ) {
+    while ( chomp( my $line = <CMDIN> ) ) {
         my ( $owner, $user, $instance, $tstamp ) = split( /\//, $line );
         $STASHCOUNT++;
         $STASHED{$owner}->{$user}->{$instance} = $tstamp;
@@ -42,6 +59,11 @@ sub get_list {
     close(CMDIN);
 }
 
+# Begin-Doc
+# Name: handle_list
+# Type: function
+# Description: handler function for the 'L' list operation
+# End-Doc
 sub handle_list {
     my $last_owner;
     my $last_user;
@@ -60,6 +82,7 @@ sub handle_list {
     print "Owner    User     Instance           Modification Time\n";
     print
         "--------------------------------------------------------------------\n";
+    my $last_ou;
     foreach my $owner ( sort( keys(%STASHED) ) ) {
         foreach my $user ( sort( keys( %{ $STASHED{$owner} } ) ) ) {
             foreach my $instance (
@@ -75,7 +98,8 @@ sub handle_list {
                 print "          \\------ $instance    ";
                 print " " x ( 15 - length($instance) );
                 print scalar(
-                    localtime( $STASHED{$owner}->{$user}->{$instance} ) ),
+                    localtime( $STASHED{$owner}->{$user}->{$instance} )
+                    ),
                     "\n";
             }
         }
@@ -83,6 +107,11 @@ sub handle_list {
     print "\n";
 }
 
+# Begin-Doc
+# Name: handle_stash
+# Type: function
+# Description: handler function for the 'S' stash operation
+# End-Doc
 sub handle_stash {
     print "\n";
 
@@ -107,6 +136,11 @@ sub handle_stash {
     &get_list();
 }
 
+# Begin-Doc
+# Name: handle_delete
+# Type: function
+# Description: handler function for the 'D' delete operation
+# End-Doc
 sub handle_delete {
     my ( $owner, $user, $instance );
 
@@ -156,6 +190,11 @@ sub handle_delete {
     &get_list();
 }
 
+# Begin-Doc
+# Name: prompt_owner
+# Description: prompt for the owner if root, otherwise just display
+# Returns: $owner as string
+# End-Doc
 sub prompt_owner {
     my $owner;
 
@@ -174,6 +213,11 @@ sub prompt_owner {
     return $owner;
 }
 
+# Begin-Doc
+# Name: prompt
+# Description: generic prompt
+# Returns: value as string
+# End-Doc
 sub prompt {
     my $label = shift;
     print "$label: ";
@@ -182,6 +226,11 @@ sub prompt {
     return $str;
 }
 
+# Begin-Doc
+# Name: prompt_pw
+# Description: prompt for pw with validation
+# Returns: pw as string
+# End-Doc
 sub prompt_pw {
     my ( $pw, $pw2 );
 

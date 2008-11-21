@@ -1,16 +1,23 @@
 #!/usr/bin/perl -t
+
+# Begin-Doc
+# Name: authsrv-dump.pl
+# Description: dump all accessible authsrv-data in xml format
+# End-Doc
+
 #
 # This is explicitly disabled here - we're running a system level tool
 # setuid as a user, otherwise running directly as that user in normal
 # cases.
 #
+$| = 1;
 no warnings qw(taint);
 
+# Make sure that authsrv tools are in the path
 $ENV{PATH} = "/usr/bin";
 
 use MIME::Base64;
-
-$| = 1;
+use strict;
 
 print "<authsrv>\n";
 

@@ -1,4 +1,10 @@
 #!/usr/bin/perl -t
+
+# Begin-Doc
+# Name: authsrv-load.pl
+# Description: merge or replace authsrv stashes with data loaded from xml export file
+# End-Doc
+
 #
 # This is explicitly disabled here - we're running a system level tool
 # setuid as a user, otherwise running directly as that user in normal
@@ -6,11 +12,13 @@
 #
 no warnings qw(taint);
 
+# Make sure that authsrv tools are in the path
 $ENV{PATH} = "/usr/bin";
 
 use MIME::Base64;
 use XML::Simple;
 use Data::Dumper;
+use strict;
 
 $| = 1;
 
