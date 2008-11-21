@@ -5,6 +5,10 @@ $| = 1;
 while ( 1 )
 {       
         print "\nAuthSrv: $STASHCOUNT stashed passwords\n";
+	if ( $^O =~ /win/i )
+	{
+		print "Note: On windows, all stashes are merged into 'common' owner.\n";
+	}
         print "Action: (S)tash (D)elete (L)ist (Q)uit: ";
         chomp($line = <STDIN>);
         last if ( !defined($line) ); 

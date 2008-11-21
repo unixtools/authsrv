@@ -18,6 +18,7 @@ file authsrv-delete.exe
 file ..\scripts\authsrv.pl
 file ..\scripts\authsrv-dump.pl
 file ..\scripts\authsrv-load.pl
+file authsrv.bat
 
 IfFileExists C:\authsrv\*.* +3 0
   CreateDirectory C:\authsrv
@@ -51,6 +52,10 @@ delete $INSTDIR\authsrv-decrypt.exe
 delete $INSTDIR\authsrv-encrypt.exe
 delete $INSTDIR\authsrv-list.exe
 delete $INSTDIR\authsrv-delete.exe
+delete ..\scripts\authsrv.pl
+delete ..\scripts\authsrv-dump.pl
+delete ..\scripts\authsrv-load.pl
+delete authsrv.bat
  
 sectionEnd
 
