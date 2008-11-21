@@ -178,7 +178,12 @@ sub prompt_owner
 {
 	my $owner;
 	
-	if ( $< == 0 )
+	if ( $^O =~ /win/i )
+	{
+		$owner = "common";
+		print "Owner: $owner\n";
+	}
+	elsif ( $< == 0 )
 	{
 		print "Owner: ";
 		chomp($owner = <STDIN>);
