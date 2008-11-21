@@ -7,7 +7,7 @@ CC = gcc -g -O2 -Wall
 
 BFLIB = ../blowfish/libblowfish.a
 
-all: auth encrypt decrypt delete list
+all: authsrv-auth authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list
 
 build: 
 	$(MAKE) clean
@@ -17,32 +17,32 @@ build:
 $(BFLIB):
 	cd ../blowfish && $(MAKE)
 
-auth: $(BFLIB) auth.o subs.o
-	$(CC) -o auth auth.o subs.o $(LIBS) `krb5-config --libs`
+authsrv-auth: $(BFLIB) auth.o subs.o
+	$(CC) -o authsrv-auth auth.o subs.o $(LIBS) `krb5-config --libs`
 
 auth.o: ../common/auth.c
 	$(CC) $(INC) `krb5-config --cflags` -c -o auth.o ../common/auth.c
 
-encrypt: $(BFLIB) encrypt.o subs.o
-	$(CC) -o encrypt encrypt.o subs.o $(LIBS)
+authsrv-encrypt: $(BFLIB) encrypt.o subs.o
+	$(CC) -o authsrv-encrypt encrypt.o subs.o $(LIBS)
 
 encrypt.o: ../common/encrypt.c
 	$(CC) $(INC) -c ../common/encrypt.c
 
-decrypt: $(BFLIB) decrypt.o subs.o
-	$(CC) -o decrypt decrypt.o subs.o $(LIBS)
+authsrv-decrypt: $(BFLIB) decrypt.o subs.o
+	$(CC) -o authsrv-decrypt decrypt.o subs.o $(LIBS)
 
 decrypt.o: ../common/decrypt.c
 	$(CC) $(INC) -c ../common/decrypt.c
 
-delete: $(BFLIB) delete.o subs.o
-	$(CC) -o delete delete.o subs.o $(LIBS)
+authsrv-delete: $(BFLIB) delete.o subs.o
+	$(CC) -o authsrv-delete delete.o subs.o $(LIBS)
 
 delete.o: ../common/delete.c
 	$(CC) $(INC) -c ../common/delete.c
 
-list: $(BFLIB) list.o subs.o
-	$(CC) -o list list.o subs.o $(LIBS)
+authsrv-list: $(BFLIB) list.o subs.o
+	$(CC) -o authsrv-list list.o subs.o $(LIBS)
 
 list.o: ../common/list.c
 	$(CC) $(INC) -c ../common/list.c
@@ -50,17 +50,17 @@ list.o: ../common/list.c
 subs.o: ../common/subs.c
 	$(CC) $(INC) -c ../common/subs.c
 
-install: encrypt decrypt delete list dirs key
-	strip encrypt
-	strip decrypt
-	strip delete
-	strip list
-	strip auth
-	cp encrypt $(BINDIR)/authsrv-encrypt
-	cp decrypt $(BINDIR)/authsrv-decrypt
-	cp delete $(BINDIR)/authsrv-delete
-	cp list $(BINDIR)/authsrv-list
-	cp auth $(BINDIR)/authsrv-auth
+install: authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-dirs key
+	strip authsrv-encrypt
+	strip authsrv-decrypt
+	strip authsrv-delete
+	strip authsrv-list
+	strip authsrv-auth
+	cp authsrv-encrypt $(BINDIR)/authsrv-encrypt
+	cp authsrv-decrypt $(BINDIR)/authsrv-decrypt
+	cp authsrv-delete $(BINDIR)/authsrv-delete
+	cp authsrv-list $(BINDIR)/authsrv-list
+	cp authsrv-auth $(BINDIR)/authsrv-auth
 	-chmod 4755 $(BINDIR)/authsrv-*
 	-chmod 755 $(DATADIR)/keys
 	-chmod 600 $(DATADIR)/host-key
@@ -77,6 +77,6 @@ $(DATADIR)/host-key:
 
 clean:
 	rm -f *.a *.o 
-	rm -f encrypt decrypt delete list auth
+	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth
 	cd ../blowfish && $(MAKE) clean
 

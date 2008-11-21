@@ -13,9 +13,6 @@
 $| = 1;
 no warnings qw(taint);
 
-# Make sure that authsrv tools are in the path
-$ENV{PATH} = "/usr/bin";
-
 use MIME::Base64;
 use strict;
 
@@ -24,22 +21,18 @@ print "<authsrv>\n";
 #
 # Retrieve listing of authsrv stashes, and output each one
 #
-open( CMDIN, "/usr/bin/authsrv-list|" );
+open( CMDIN, "authsrv-list|" );
 while ( chomp( my $line = <CMDIN> ) ) {
     my ( $owner, $user, $instance, $tstamp ) = split( /\//, $line );
 
-    my @tmp = getpwnam($owner);
-    next if ( $tmp[0] ne $owner );
-
-    unless ( open( FETCH, "-|" ) ) {
-        if ( $> != $tmp[2] ) {
-            $) = $tmp[3];
-            $( = $tmp[3];
-            $< = $tmp[2];
-            $> = $tmp[2];
+    if ( $^O !~ /Win/ ) {
+        unless ( open( FETCH, "-|" ) ) {
+            exec( "authsrv-decrypt", $owner, $user, $instance );
+            exit(0);
         }
-        exec( "/usr/bin/authsrv-decrypt", $user, $instance );
-        exit(0);
+    }
+    else {
+        open( FETCH, "authsrv-decrypt $owner $user $instance|" );
     }
     chomp( my $pw = <FETCH> );
     close(FETCH);

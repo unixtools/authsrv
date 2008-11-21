@@ -1,4 +1,4 @@
-#!/usr/bin/perl -t
+#!/esr/bin/perl -t
 
 # Begin-Doc
 # Name: authsrv-load.pl
@@ -11,9 +11,6 @@
 # cases.
 #
 no warnings qw(taint);
-
-# Make sure that authsrv tools are in the path
-$ENV{PATH} = "/usr/bin";
 
 use MIME::Base64;
 use XML::Simple;
@@ -43,7 +40,7 @@ if ( $ARGV[0] eq "-h" || $ARGV[0] eq "--help" ) {
 if ( $mode eq "help" ) {
     print "Usage: $0 [--load|--merge] xmlfile\n";
     print
-        "\this tool will bulk-load authsrv stashes from an XML file generated\n";
+      "\this tool will bulk-load authsrv stashes from an XML file generated\n";
     print "\tby the authsrv-dump command.\n";
     exit;
 }
@@ -53,7 +50,7 @@ if ( $mode eq "help" ) {
 #
 my %HAVE_ENTRY = ();
 if ( $mode eq "load" ) {
-    open( CMDIN, "/usr/bin/authsrv-list|" );
+    open( CMDIN, "authsrv-list|" );
     while ( chomp( my $line = <CMDIN> ) ) {
         my ( $owner, $user, $instance, $tstamp ) = split( /\//, $line );
         $HAVE_ENTRY{$owner}->{$user}->{$instance} = 1;
@@ -81,14 +78,18 @@ foreach my $entry ( @{ $data->{entry} } ) {
     my $instance = $entry->{instance}                  || next;
     my $password = decode_base64( $entry->{password} ) || next;
 
-    if (1) {
+    if ( $^O !~ /Win/ ) {
         unless ( open( STASH, "|-" ) ) {
-            exec( "/usr/bin/authsrv-encrypt", $owner, $user, $instance );
+            exec( "authsrv-encrypt", $owner, $user, $instance );
             exit(0);
         }
-        print STASH $password, "\n";
-        close(STASH);
     }
+    else {
+        open( STASH, "|authsrv-encrypt $owner $user $instance" );
+    }
+    print STASH $password, "\n";
+    close(STASH);
+
     $cnt++;
     delete $HAVE_ENTRY{$owner}->{$user}->{$instance};
     print "Processed entry #$cnt.\n";
@@ -97,10 +98,10 @@ foreach my $entry ( @{ $data->{entry} } ) {
 foreach my $owner ( sort( keys(%HAVE_ENTRY) ) ) {
     foreach my $user ( sort( keys( %{ $HAVE_ENTRY{$owner} } ) ) ) {
         foreach
-            my $instance ( sort( keys( %{ $HAVE_ENTRY{$owner}->{$user} } ) ) )
+          my $instance ( sort( keys( %{ $HAVE_ENTRY{$owner}->{$user} } ) ) )
         {
             print "Purge old entry $owner/$user/$instance.\n";
-            system( "/usr/bin/authsrv-delete", $owner, $user, $instance );
+            system( "authsrv-delete", $owner, $user, $instance );
         }
     }
 }
