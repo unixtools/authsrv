@@ -97,7 +97,14 @@ sub handle_stash
         my $pw = &prompt_pw() || return;
 
         print "\n";
-        open(CMD, "|-") || exec("authsrv-encrypt", $owner, $user, $instance);
+	if ( $^O !~ /win/i )
+	{
+        	open(CMD, "|-") || exec("authsrv-encrypt", $owner, $user, $instance);
+	}
+	else
+	{
+		open(CMD, "|authsrv-encrypt $owner $user $instance");
+	}
         print CMD $pw, "\n";
         close(CMD);
         print "\n";
@@ -194,14 +201,20 @@ sub prompt_pw
 	my ($pw, $pw2);
 	
 	print "Password: ";
-	system("stty -echo");
+	if ( $^O !~ /win/i )
+	{
+		system("stty -echo");
+	}
 	chomp($pw = <STDIN>);
 	print "\n";
 	
 	print "Verify: ";
 	chomp($pw2 = <STDIN>);
 	print "\n";
-	system("stty echo");
+	if ( $^O !~ /win/i )
+	{
+		system("stty echo");
+	}
 
 	if ( $pw eq $pw2 )
 	{
