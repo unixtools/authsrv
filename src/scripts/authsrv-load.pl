@@ -50,56 +50,51 @@ if ( $mode eq "load" ) {
         my ( $owner, $user, $instance, $tstamp ) = split( /\//, $line );
         $HAVE_ENTRY{$owner}->{$user}->{$instance} = 1;
     }
-	close(CMDIN);
+    close(CMDIN);
 }
 
 #
 # Now load any of the new entries
 #
-my $xmldata = join("", <>);
-my $xmlobj = new XML::Simple;
-my $data = $xmlobj->XMLin($xmldata, ForceArray => ['entry']);
+my $xmldata = join( "", <> );
+my $xmlobj  = new XML::Simple;
+my $data    = $xmlobj->XMLin( $xmldata, ForceArray => ['entry'] );
 
-if ( ref($data->{entry}) ne "ARRAY" )
-{
-	die "Unable to parse input XML.\n";
+if ( ref( $data->{entry} ) ne "ARRAY" ) {
+    die "Unable to parse input XML.\n";
 }
 
 my $cnt = 0;
-foreach my $entry ( @{ $data->{entry} } )
-{
-	next if ( ref($entry) ne "HASH" );
+foreach my $entry ( @{ $data->{entry} } ) {
+    next if ( ref($entry) ne "HASH" );
 
-	my $owner = $entry->{owner} || next;
-	my $user = $entry->{user} || next;
-	my $instance = $entry->{instance} || next;
-	my $password = decode_base64($entry->{password}) || next;
+    my $owner    = $entry->{owner}                     || next;
+    my $user     = $entry->{user}                      || next;
+    my $instance = $entry->{instance}                  || next;
+    my $password = decode_base64( $entry->{password} ) || next;
 
-	if(1)
-	{
-		unless(open(STASH, "|-"))
-		{
-			exec("/usr/bin/authsrv-encrypt", $owner, $user, $instance);
-			exit(0);
-		}
-		print STASH $password, "\n";
-		close(STASH);
-	}
-	$cnt++;
-	delete $HAVE_ENTRY{$owner}->{$user}->{$instance};
-	print "Processed entry #$cnt.\n";
+    if (1) {
+        unless ( open( STASH, "|-" ) ) {
+            exec( "/usr/bin/authsrv-encrypt", $owner, $user, $instance );
+            exit(0);
+        }
+        print STASH $password, "\n";
+        close(STASH);
+    }
+    $cnt++;
+    delete $HAVE_ENTRY{$owner}->{$user}->{$instance};
+    print "Processed entry #$cnt.\n";
 }
 
-foreach my $owner ( sort(keys(%HAVE_ENTRY)) )
-{
-	foreach my $user ( sort(keys( %{$HAVE_ENTRY{$owner}})) )
-	{
-		foreach my $instance ( sort(keys( %{$HAVE_ENTRY{$owner}->{$user}} )) )
-		{
-			print "Purge old entry $owner/$user/$instance.\n";
-			system("/usr/bin/authsrv-delete", $owner, $user, $instance);
-		}
-	}
+foreach my $owner ( sort( keys(%HAVE_ENTRY) ) ) {
+    foreach my $user ( sort( keys( %{ $HAVE_ENTRY{$owner} } ) ) ) {
+        foreach
+            my $instance ( sort( keys( %{ $HAVE_ENTRY{$owner}->{$user} } ) ) )
+        {
+            print "Purge old entry $owner/$user/$instance.\n";
+            system( "/usr/bin/authsrv-delete", $owner, $user, $instance );
+        }
+    }
 }
 
 exit(0);
