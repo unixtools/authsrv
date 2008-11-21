@@ -127,7 +127,9 @@ void scan_owners(char *owner, char *user, char *instance)
 
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s", fn);
+#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
+#endif
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
 		scan_users(fn, user, instance);		
@@ -165,7 +167,9 @@ void scan_users(char *owner, char *user, char *instance)
 
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s", owner, fn);
+#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
+#endif
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
 		scan_instances(owner, fn, instance);		
@@ -203,7 +207,9 @@ void scan_instances(char *owner, char *user, char *instance)
 
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s", owner, user, fn);
+#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
+#endif
 		if ( ! S_ISREG(tmpstat.st_mode) ) continue;
 		
 		printf("%s/%s/%s/%u\n", owner, user, fn, (unsigned int) tmpstat.st_mtime);

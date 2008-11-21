@@ -6,7 +6,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifndef WINDOWS
 #include <syslog.h>
+#endif
 #include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
@@ -15,6 +17,7 @@
 
 void Log(char *action, char *owner, char *user, char *instance)
 {
+#ifndef WINDOWS
 	openlog("authsrv", LOG_PID | LOG_NOWAIT, LOG_AUTHPRIV);
 	syslog(LOG_DEBUG, "Who(%d/%d) Action(%s) Owner(%s) User(%s) Instance(%s)",
 		getuid(), 
@@ -23,6 +26,7 @@ void Log(char *action, char *owner, char *user, char *instance)
 		CheckNull(owner), 
 		CheckNull(user), 
 		CheckNull(instance));
+#endif
 }
 
 char *check_element(char *str)

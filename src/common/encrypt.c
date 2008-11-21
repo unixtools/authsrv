@@ -104,10 +104,16 @@ int main(int argc, char *argv[])
 	data.data = (unsigned char *) passwd;
 	data.length = strlen(passwd)+1;
 
+#ifndef WINDOWS
+#define MKDIR(x,y) mkdir(x,y)
+#else
+#define MKDIR(x,y) mkdir(x)
+#endif
+
 	/* Make each directory and build the file name */
     sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s",
         owner);
-	if ( mkdir(filename, 0755) == -1 && errno != EEXIST )
+	if ( MKDIR(filename, 0755) == -1 && errno != EEXIST )
 	{
 		fprintf(stderr, "couldn't create dir (%s)\n", filename);
 		exit(1);
@@ -115,7 +121,7 @@ int main(int argc, char *argv[])
 
     sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s",
         owner, user);
-	if ( mkdir(filename, 0755) == -1 && errno != EEXIST )
+	if ( MKDIR(filename, 0755) == -1 && errno != EEXIST )
 	{
 		fprintf(stderr, "couldn't create dir (%s)\n", filename);
 		exit(1);
