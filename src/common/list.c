@@ -18,7 +18,9 @@ int main(int argc, char *argv[])
 {
 	char res[21];
 	char *user = NULL, *instance = NULL, *owner = NULL;
+#ifndef WINDOWS
 	struct passwd *userpw;
+#endif
 
 	if ( (argc == 2 || argc > 4) && !strcmp(argv[1], "-h") )
 	{
@@ -31,11 +33,13 @@ int main(int argc, char *argv[])
 	}	
 	res[20] = 0;
 
+#ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
 		exit(1);
 	}
+#endif
 
 	if ( argc > 1 )
 	{
@@ -52,32 +56,37 @@ int main(int argc, char *argv[])
 		instance = argv[3];
 	}
 
+#ifndef WINDOWS
 	if ( getuid() != 0 && !owner )
 	{
 		owner = strdup(userpw->pw_name);
 	}
 
-        if ( getuid() != 0 && owner && strcmp(owner,userpw->pw_name) )
-        {
-                fprintf(stderr, "owner does not match and you are not root\n");
-                exit(1);
-        }
+    if ( getuid() != 0 && owner && strcmp(owner,userpw->pw_name) )
+    {
+        fprintf(stderr, "owner does not match and you are not root\n");
+        exit(1);
+    }
+#else
+    /* owner forced to 'common' on windows */
+    owner = strdup("common");
+#endif
 
-        if ( owner && check_element(owner) )
-        {
-                fprintf(stderr, "error on owner: %s\n", check_element(owner));
-                exit(1);
-        }
-        if ( user && check_element(user) )
-        {
-                fprintf(stderr, "error on user: %s\n", check_element(user));
-                exit(1);
-        }
-        if ( instance && check_element(instance) )
-        {
-                fprintf(stderr, "error on instance: %s\n", check_element(instance));
-                exit(1);
-        }
+    if ( owner && check_element(owner) )
+    {
+        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        exit(1);
+    }
+    if ( user && check_element(user) )
+    {
+        fprintf(stderr, "error on user: %s\n", check_element(user));
+        exit(1);
+    }
+    if ( instance && check_element(instance) )
+    {
+        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        exit(1);
+    }
 
 	Log("list", owner ? owner : "*", user ? user : "*", instance ? instance : "*" );
 
@@ -97,7 +106,7 @@ void scan_owners(char *owner, char *user, char *instance)
 	dirh = opendir(filename);
 	if ( ! dirh )
 	{
-		exit(0); /* not really an error */
+        return;
 	}
 	while ( (fh = readdir(dirh)) )
 	{
@@ -114,7 +123,7 @@ void scan_owners(char *owner, char *user, char *instance)
 		if ( check_element(fn) ) continue;
 
 		/* stat it and skip if not a directory */
-		sprintf(tmpfile, DATADIR "/keys/%s", fn);
+		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s", fn);
 		if ( lstat(tmpfile, &tmpstat) ) continue;
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
@@ -131,11 +140,11 @@ void scan_users(char *owner, char *user, char *instance)
 	char filename[400];
 	struct dirent *fh;
 		
-	sprintf(filename, DATADIR "/keys/%s", owner);
+	sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s", owner);
 	dirh = opendir(filename);
 	if ( ! dirh )
 	{
-		exit(0); /* not really an error */
+        return;
 	}
 	while ( (fh = readdir(dirh)) )
 	{
@@ -152,7 +161,7 @@ void scan_users(char *owner, char *user, char *instance)
 		if ( check_element(fn) ) continue;
 
 		/* stat it and skip if not a directory */
-		sprintf(tmpfile, DATADIR "/keys/%s/%s", owner, fn);
+		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s", owner, fn);
 		if ( lstat(tmpfile, &tmpstat) ) continue;
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
@@ -169,11 +178,11 @@ void scan_instances(char *owner, char *user, char *instance)
 	char filename[400];
 	struct dirent *fh;
 		
-	sprintf(filename, DATADIR "/keys/%s/%s", owner, user);
+	sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s", owner, user);
 	dirh = opendir(filename);
 	if ( ! dirh )
 	{
-		exit(0); /* not really an error */
+        return;
 	}
 	while ( (fh = readdir(dirh)) )
 	{
@@ -190,7 +199,7 @@ void scan_instances(char *owner, char *user, char *instance)
 		if ( check_element(fn) ) continue;
 
 		/* stat it and skip if not a directory */
-		sprintf(tmpfile, DATADIR "/keys/%s/%s/%s", owner, user, fn);
+		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s", owner, user, fn);
 		if ( lstat(tmpfile, &tmpstat) ) continue;
 		if ( ! S_ISREG(tmpstat.st_mode) ) continue;
 		

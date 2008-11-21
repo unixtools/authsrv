@@ -10,6 +10,10 @@
 krb5_ccache krb5util_ccache = NULL;
 krb5_context krb5util_context;
 
+#ifdef WINDOWS
+#error auth executable cannot be built on windows
+#endif
+
 int authenticate(char *user, char *pass);
 
 int main(int argc, char *argv[])
@@ -28,12 +32,17 @@ int main(int argc, char *argv[])
 		exit(1);
 	}	
 
+#ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
 		exit(1);
 	}
 	owner = strdup(userpw->pw_name);
+#else
+    /* on windows, owner is forced to 'common' */
+    owner = strdup("common");
+#endif
 
 	user = argv[1];
 	if ( argc > 2 )
@@ -62,14 +71,17 @@ int main(int argc, char *argv[])
     }
 
     Log("decrypt", owner, user, instance);
-    sprintf(filename, DATADIR "/keys/%s/%s/%s",
-        owner, user, instance);
+
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s",
+        owner, user, instance); 
 
 	encrypted = FileToDataBlock(filename);
 	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);
 
+#ifndef WINDOWS
 	/* switch back to real uid before authenticating so we can access ccache */
 	setuid(getuid());
+#endif
 
 	/* now authenticate */
 	authenticate(user, decrypted->data);

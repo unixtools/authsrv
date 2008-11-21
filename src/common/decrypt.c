@@ -11,7 +11,9 @@ int main(int argc, char *argv[])
 	char res[21];
 	char *user, *instance, *owner;
 	char filename[400];
+#ifndef WINDOWS
 	struct passwd *userpw;
+#endif
 	struct DataBlock *encrypted, *decrypted;
 
 	if ( argc != 3 )
@@ -24,12 +26,17 @@ int main(int argc, char *argv[])
 	}	
 	res[20] = 0;
 
+#ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
 		exit(1);
 	}
 	owner = strdup(userpw->pw_name);
+#else
+    /* owner forced to 'common' on windows */
+    owner = strdup("common");
+#endif
 
 	user = argv[1];
 	instance = argv[2];
@@ -51,8 +58,9 @@ int main(int argc, char *argv[])
     }
 
 	Log("decrypt", owner, user, instance);
-	sprintf(filename, DATADIR "/keys/%s/%s/%s",
-		owner, user, instance);
+    
+	sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s",
+        owner, user, instance);
 
 	encrypted = FileToDataBlock(filename);
 	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);

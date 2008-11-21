@@ -14,4 +14,9 @@ Security: Access to host-key file is necessary to decrypt
 
 
 
+*** NOTICE *** Implementation for windows is barebones/minimal and effectively has
+no security at this time. This implementation is purely for convenience of keeping the
+code the same on unix and windows, and to keep passwords out of script source files.
+
+
 Please see blowfish/COPYRIGHT for license information for the included blowfish library.

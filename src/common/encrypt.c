@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr,"Usage:\n");
 		fprintf(stderr,"\t%s <owner> <user> <instance>\n", argv[0]);
 		fprintf(stderr,"\t<owner> is the owner userid of this userid/password\n");
+#ifdef WINDOWS
+		fprintf(stderr,"\t<owner> is ignored on windows builds\n");
+#endif
 		fprintf(stderr,"\t<user> is the userid for this password\n");
 		fprintf(stderr,"\t<instance> is the particular instance\n");
 		fprintf(stderr,"\t<password> is passed via stdin\n");
@@ -59,6 +62,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+#ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
@@ -70,7 +74,10 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "owner does not match and you are not root\n");
 		exit(1);
 	}
-
+#else
+    /* No security on windows! Force owner to 'common' */
+    owner = strdup("common");
+#endif
 
 	if ( ! fgets(passwd, MAX_DATA_LEN, stdin) )
 	{
@@ -95,26 +102,24 @@ int main(int argc, char *argv[])
 	data.length = strlen(passwd)+1;
 
 	/* Make each directory and build the file name */
-	strcpy(filename, DATADIR "/keys");
-
-	strcat(filename, "/");
-	strcat(filename, owner);
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s",
+        owner);
 	if ( mkdir(filename, 0755) == -1 && errno != EEXIST )
 	{
 		fprintf(stderr, "couldn't create dir (%s)\n", filename);
 		exit(1);
 	}
 
-	strcat(filename, "/");
-	strcat(filename, user);
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s",
+        owner, user);
 	if ( mkdir(filename, 0755) == -1 && errno != EEXIST )
 	{
 		fprintf(stderr, "couldn't create dir (%s)\n", filename);
 		exit(1);
 	}
 
-	strcat(filename, "/");
-	strcat(filename, instance);
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s",
+        owner, user, instance);
 
 	Log("encrypt", owner, user, instance);
 	DataBlockToFile(filename, wrap_blowfish(FetchHostKey(),&data,BF_ENCRYPT));

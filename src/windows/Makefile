@@ -3,7 +3,7 @@ DATADIR=C:\\\\authsrv
 
 LIBS = -L../blowfish -lblowfish
 INC = -I../blowfish -I../common
-CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
+CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\" -DWINDOWS -DDIRSEP=\"\\\\\"
 
 BFLIB = ../blowfish/libblowfish.a
 

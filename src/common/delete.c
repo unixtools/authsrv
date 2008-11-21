@@ -35,46 +35,39 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-
-        if ( check_element(owner) )
-        {
-                fprintf(stderr, "error on owner: %s\n", check_element(owner));
-                exit(1);
-        }
-        if ( check_element(user) )
-        {
-                fprintf(stderr, "error on user: %s\n", check_element(user));
-                exit(1);
-        }
-        if ( check_element(instance) )
-        {
-                fprintf(stderr, "error on instance: %s\n", check_element(instance));
-                exit(1);
-        }
+    if ( check_element(owner) )
+    {
+        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        exit(1);
+    }
+    if ( check_element(user) )
+    {
+        fprintf(stderr, "error on user: %s\n", check_element(user));
+        exit(1);
+    }
+    if ( check_element(instance) )
+    {
+        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        exit(1);
+    }
 
 	/* Make each directory and build the file name */
-	strcpy(filename, DATADIR "/keys/");
-	strcat(filename, owner);
-	strcat(filename, "/");
-	strcat(filename, user);
-	strcat(filename, "/");
-	strcat(filename, instance);
-
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s",
+        owner, user, instance);
 	Log("delete", owner, user, instance);
 	unlink(filename);
 
 	/* Now try to unlink dirs if empty */
-	strcpy(filename, DATADIR "/keys/");
-	strcat(filename, owner);
-	strcat(filename, "/");
-	strcat(filename, user);
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s",
+        owner, user);
+	Log("delete", owner, user, instance);
 	if ( rmdir(filename) )
 	{
 		exit(0);
 	}
 
-	strcpy(filename, DATADIR "/keys/");
-	strcat(filename, owner);
+    sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s",
+        owner);
 	if ( rmdir(filename) )
 	{
 		exit(0);
