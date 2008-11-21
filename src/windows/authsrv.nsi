@@ -19,6 +19,8 @@ file ..\scripts\authsrv.pl
 file ..\scripts\authsrv-dump.pl
 file ..\scripts\authsrv-load.pl
 file authsrv.bat
+file authsrv-dump.bat
+file authsrv-load.bat
 
 IfFileExists C:\authsrv\*.* +3 0
   CreateDirectory C:\authsrv
@@ -56,6 +58,8 @@ delete ..\scripts\authsrv.pl
 delete ..\scripts\authsrv-dump.pl
 delete ..\scripts\authsrv-load.pl
 delete authsrv.bat
+delete authsrv-dump.bat
+delete authsrv-load.bat
  
 sectionEnd
 
