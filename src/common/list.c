@@ -12,6 +12,9 @@
 #include "blowfish.h"
 #include "subs.h"
 
+#ifdef WINDOWS
+#define lstat stat
+#endif
 
 void scan_owners(char *owner, char *user, char *instance);
 void scan_users(char *owner, char *user, char *instance);
@@ -91,10 +94,10 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-	Log("list", owner ? owner : "*", user ? user : "*", instance ? instance : "*" );
+    Log("list", owner ? owner : "*", user ? user : "*", instance ? instance : "*" );
 
-	scan_owners(owner, user, instance);
-	exit(0);
+    scan_owners(owner, user, instance);
+    exit(0);
 }
 
 void scan_owners(char *owner, char *user, char *instance)
@@ -105,7 +108,7 @@ void scan_owners(char *owner, char *user, char *instance)
 	char filename[400];
 	struct dirent *fh;
 		
-	sprintf(filename, DATADIR "/keys");
+	sprintf(filename, DATADIR DIRSEP "keys");
 	dirh = opendir(filename);
 	if ( ! dirh )
 	{
@@ -125,11 +128,10 @@ void scan_owners(char *owner, char *user, char *instance)
 		/* skip anything we don't consider valid */
 		if ( check_element(fn) ) continue;
 
+
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s", fn);
-#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
-#endif
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
 		scan_users(fn, user, instance);		
@@ -144,6 +146,7 @@ void scan_users(char *owner, char *user, char *instance)
 	char tmpfile[500];
 	char filename[400];
 	struct dirent *fh;
+
 		
 	sprintf(filename, DATADIR DIRSEP "keys" DIRSEP "%s", owner);
 	dirh = opendir(filename);
@@ -167,9 +170,7 @@ void scan_users(char *owner, char *user, char *instance)
 
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s", owner, fn);
-#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
-#endif
 		if ( ! S_ISDIR(tmpstat.st_mode) ) continue;
 		
 		scan_instances(owner, fn, instance);		
@@ -207,9 +208,7 @@ void scan_instances(char *owner, char *user, char *instance)
 
 		/* stat it and skip if not a directory */
 		sprintf(tmpfile, DATADIR DIRSEP "keys" DIRSEP "%s" DIRSEP "%s" DIRSEP "%s", owner, user, fn);
-#ifndef WINDOWS
 		if ( lstat(tmpfile, &tmpstat) ) continue;
-#endif
 		if ( ! S_ISREG(tmpstat.st_mode) ) continue;
 		
 		printf("%s/%s/%s/%u\n", owner, user, fn, (unsigned int) tmpstat.st_mtime);
