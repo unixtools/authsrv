@@ -1,9 +1,9 @@
 BINDIR=/usr/bin
 DATADIR=/usr/share/authsrv
 
-LIBS = -L./blowfish -lblowfish
-INC = -I./blowfish
-CC = gcc -mno-cygwin -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
+LIBS = -L../blowfish -lblowfish
+INC = -I../blowfish
+CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
 
 BFLIB = ../blowfish/libblowfish.a
 
@@ -78,5 +78,5 @@ $(DATADIR)/host-key:
 clean:
 	rm -f *.a *.o 
 	rm -f encrypt decrypt delete list
-	cd blowfish && $(MAKE) clean
+	cd ../blowfish && $(MAKE) clean
 

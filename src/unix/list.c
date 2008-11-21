@@ -18,11 +18,7 @@ int main(int argc, char *argv[])
 {
 	char res[21];
 	char *user = NULL, *instance = NULL, *owner = NULL;
-	char *curuser = NULL;
-#if 0
 	struct passwd *userpw;
-#else
-#endif
 
 	if ( (argc == 2 || argc > 4) && !strcmp(argv[1], "-h") )
 	{
@@ -35,17 +31,11 @@ int main(int argc, char *argv[])
 	}	
 	res[20] = 0;
 
-#if 0
-	{
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
 		exit(1);
 	}
-	}
-#else
-	/* change to use GetUserName function from win32 api */
-#endif
 
 	if ( argc > 1 )
 	{

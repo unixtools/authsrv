@@ -10,10 +10,6 @@
 krb5_ccache krb5util_ccache = NULL;
 krb5_context krb5util_context;
 
-#if 0
-#define DEBUG
-#endif
-
 int authenticate(char *user, char *pass);
 
 int main(int argc, char *argv[])
@@ -49,25 +45,25 @@ int main(int argc, char *argv[])
 		instance = "ads";
 	}
 	
-        if ( check_element(owner) )
-        {
-                fprintf(stderr, "error on owner: %s\n", check_element(owner));
-                exit(1);
-        }
-        if ( check_element(user) )
-        {
-                fprintf(stderr, "error on user: %s\n", check_element(user));
-                exit(1);
-        }
-        if ( check_element(instance) )
-        {
-                fprintf(stderr, "error on instance: %s\n", check_element(instance));
-                exit(1);
-        }
+    if ( check_element(owner) )
+    {
+        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        exit(1);
+    }
+    if ( check_element(user) )
+    {
+        fprintf(stderr, "error on user: %s\n", check_element(user));
+        exit(1);
+    }
+    if ( check_element(instance) )
+    {
+        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        exit(1);
+    }
 
-        Log("decrypt", owner, user, instance);
-        sprintf(filename, DATADIR "/keys/%s/%s/%s",
-                owner, user, instance);
+    Log("decrypt", owner, user, instance);
+    sprintf(filename, DATADIR "/keys/%s/%s/%s",
+        owner, user, instance);
 
 	encrypted = FileToDataBlock(filename);
 	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);
@@ -102,9 +98,8 @@ int authenticate(char *user, char *pass)
 	/* Set the CCache to use */
 	if ( ! getenv("KRB5CCNAME") )
 	{
-       		sprintf(ccache, "KRB5CCNAME=/tmp/krb5cc_authsrv_u%d_p%d", 
-                	getuid(), getpid());
-        	putenv(ccache);
+        sprintf(ccache, "KRB5CCNAME=/tmp/krb5cc_authsrv_u%d_p%d", getuid(), getpid());
+        putenv(ccache);
 		used_own_krb5ccname = 1;
 	}
 
@@ -150,7 +145,7 @@ int authenticate(char *user, char *pass)
 		kprinc)) )
 	{
 		syslog(LOG_ERR, "cc_init failed (%s)", error_message(retval));
-        	krb5_cc_destroy(krb5util_context, krb5util_ccache);
+        krb5_cc_destroy(krb5util_context, krb5util_ccache);
 		return 1;
 	}
 
@@ -168,23 +163,13 @@ int authenticate(char *user, char *pass)
 	if ( retval )
 	{
 		syslog(LOG_ERR, "get_in_tkt failed (%s)", error_message(retval));
-        	krb5_cc_destroy(krb5util_context, krb5util_ccache);
+        krb5_cc_destroy(krb5util_context, krb5util_ccache);
 		return 1;
 	}
 
-#ifdef DEBUG
-	system("id");
-	system("id; /home/local/krb5/bin/aklog -d; id");
-	system("id");
-	system("tokens");
-	system("id");
-#else
-	system("/home/local/krb5/bin/aklog </dev/null >/dev/null 2>&1");
-#endif
-
 	if ( used_own_krb5ccname )
 	{
-        	krb5_cc_destroy(krb5util_context, krb5util_ccache);
+        krb5_cc_destroy(krb5util_context, krb5util_ccache);
 	}
 	return(0);
 }
