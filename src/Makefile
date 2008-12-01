@@ -12,7 +12,7 @@ clean:
 		cd unix && $(MAKE) clean; \
 	fi
 
-dist:
+dist: clean
 	cp -pr ../src ../authsrv-src
 	find ../authsrv-src -depth -name .svn -exec rm -rf {} \;
 	rm -f ../binaries/authsrv-src.tgz
