@@ -11,3 +11,10 @@ clean:
 	else \
 		cd unix && $(MAKE) clean; \
 	fi
+
+dist:
+	cp -pr ../src ../authsrv-src
+	find ../authsrv-src -depth -name .svn -exec rm -rf {} \;
+	rm -f ../binaries/authsrv-src.tgz
+	cd .. && gtar -czvf binaries/authsrv-src.tgz authsrv-src
+	rm -rf ../authsrv-src
