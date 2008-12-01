@@ -5,6 +5,8 @@ LIBS = -L../blowfish -lblowfish
 INC = -I../blowfish -I../common
 CC = gcc -g -O2 -Wall 
 
+INSTALL = install -c
+
 BFLIB = ../blowfish/libblowfish.a
 
 all: authsrv-auth authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list
@@ -50,20 +52,12 @@ list.o: ../common/list.c
 subs.o: ../common/subs.c
 	$(CC) $(INC) -c ../common/subs.c
 
-install: authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-dirs key
-	strip authsrv-encrypt
-	strip authsrv-decrypt
-	strip authsrv-delete
-	strip authsrv-list
-	strip authsrv-auth
-	cp authsrv-encrypt $(BINDIR)/authsrv-encrypt
-	cp authsrv-decrypt $(BINDIR)/authsrv-decrypt
-	cp authsrv-delete $(BINDIR)/authsrv-delete
-	cp authsrv-list $(BINDIR)/authsrv-list
-	cp authsrv-auth $(BINDIR)/authsrv-auth
-	-chmod 4755 $(BINDIR)/authsrv-*
-	-chmod 755 $(DATADIR)/keys
-	-chmod 600 $(DATADIR)/host-key
+install: dirs authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list key
+	$(INSTALL) -m 4755 -o root -g root authsrv-encrypt $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-decrypt $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-delete $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-list $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-auth $(BINDIR)
 
 dirs:
 	mkdir -p $(DATADIR)/keys
@@ -72,6 +66,8 @@ dirs:
 key: dirs $(DATADIR)/host-key
 
 $(DATADIR)/host-key:
+	-chmod 600 $(DATADIR)/host-key
+	touch $(DATADIR)/host-key
 	umask 077 && head -64c /dev/random > $(DATADIR)/host-key
 	chmod 400 $(DATADIR)/host-key
 
