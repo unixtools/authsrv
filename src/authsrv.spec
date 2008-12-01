@@ -24,10 +24,11 @@ cd authsrv
 make DATADIR=%{_datadir}/authsrv BINDIR=%{_bindir}
 
 %install
+%{__rm} -rf %{buildroot}
 cd authsrv/unix
-make DATADIR=%{_datadir}/authsrv BINDIR=%{_bindir} install
+make DATADIR=%{buildroot}%{_datadir}/authsrv BINDIR=%{buildroot}%{_bindir} install
 umask 077
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/authsrv/keys
+mkdir -p %{buildroot}%{_datadir}/authsrv/keys
 umask 022
 #mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 #cp encrypt $RPM_BUILD_ROOT/%{_bindir}/authsrv-encrypt
@@ -53,6 +54,7 @@ chmod -R go-rwx %{_datadir}/authsrv
 %{__rm} -rf %{buildroot}
 
 %files
+%defattr(-, root, root, 0755)
 %attr(0755, root, root) %{_bindir}/authsrv
 
 %attr(0755, root, root) %{_bindir}/authsrv-dump
@@ -65,6 +67,5 @@ chmod -R go-rwx %{_datadir}/authsrv
 %attr(4755, root, root) %{_bindir}/authsrv-list
 
 %attr(0700, root, root) %{_datadir}/authsrv
-#%attr(0700, root, root) %{_datadir}/authsrv/keys
 
 %changelog

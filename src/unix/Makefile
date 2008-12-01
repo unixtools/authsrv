@@ -52,22 +52,27 @@ list.o: ../common/list.c
 subs.o: ../common/subs.c
 	$(CC) $(INC) -c ../common/subs.c
 
-install: dirs authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list key
+# Do not put key on this, otherwise will include a key in an RPM build
+install: dirs authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list
 	$(INSTALL) -m 4755 -o root -g root authsrv-encrypt $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-decrypt $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-delete $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-list $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-auth $(BINDIR)
+	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv-dump.pl $(BINDIR)/authsrv-dump
+	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv-load.pl $(BINDIR)/authsrv-load
+	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv.pl $(BINDIR)/authsrv
 
 dirs:
+	mkdir -p $(BINDIR)
 	mkdir -p $(DATADIR)/keys
 	chmod 700 $(DATADIR) $(DATADIR)/keys
 
 key: dirs $(DATADIR)/host-key
 
 $(DATADIR)/host-key:
+	-touch $(DATADIR)/host-key
 	-chmod 600 $(DATADIR)/host-key
-	touch $(DATADIR)/host-key
 	umask 077 && head -64c /dev/random > $(DATADIR)/host-key
 	chmod 400 $(DATADIR)/host-key
 
