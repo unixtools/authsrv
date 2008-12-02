@@ -2,7 +2,7 @@
 Summary: AuthSrv Tool
 Name: authsrv
 Version: 2.0
-Release: 1
+Release: 2
 License: Distributable
 Group: System Environment/Base
 BuildArch: i386
