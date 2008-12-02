@@ -1,4 +1,4 @@
-#!/esr/bin/perl -t
+#!/usr/bin/perl -t
 
 # Begin-Doc
 # Name: authsrv-load.pl
