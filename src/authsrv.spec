@@ -30,15 +30,6 @@ make DATADIR=%{buildroot}%{_datadir}/authsrv BINDIR=%{buildroot}%{_bindir} insta
 umask 077
 mkdir -p %{buildroot}%{_datadir}/authsrv/keys
 umask 022
-#mkdir -p $RPM_BUILD_ROOT/%{_bindir}
-#cp encrypt $RPM_BUILD_ROOT/%{_bindir}/authsrv-encrypt
-#cp decrypt $RPM_BUILD_ROOT/%{_bindir}/authsrv-decrypt
-#cp delete $RPM_BUILD_ROOT/%{_bindir}/authsrv-delete
-#cp list $RPM_BUILD_ROOT/%{_bindir}/authsrv-list
-#cp auth $RPM_BUILD_ROOT/%{_bindir}/authsrv-auth
-#cp authsrv.pl $RPM_BUILD_ROOT/%{_bindir}/authsrv
-#cp authsrv-dump.pl $RPM_BUILD_ROOT/%{_bindir}/authsrv-dump
-#cp authsrv-load.pl $RPM_BUILD_ROOT/%{_bindir}/authsrv-load
 
 %post
 umask 077
