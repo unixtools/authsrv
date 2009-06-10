@@ -1,4 +1,5 @@
 # define installer name
+name "AuthSrv"
 outFile "install-authsrv.exe"
  
 # set desktop as install directory
