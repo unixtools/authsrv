@@ -37,6 +37,16 @@ IfFileExists C:\authsrv\host-key +4 0
   fileWrite $0 "dummy-host-key-lkhasd23976235blygi86234jksgdf"
   fileClose $0
 
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
+                 "DisplayName" "AuthSrv -- password stashing facility"
+
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
+                 "UninstallString" "$\"$INSTDIR\uninstall-authsrv.exe$\""
+
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
+                 "QuietUninstallString" "$\"$INSTDIR\uninstall-authsrv.exe$\" /S"
+
+
 # define uninstaller name
 writeUninstaller $INSTDIR\uninstall-authsrv.exe
  
@@ -61,6 +71,11 @@ delete ..\scripts\authsrv-load.pl
 delete authsrv.bat
 delete authsrv-dump.bat
 delete authsrv-load.bat
+
+# Not deleting the host-key and/or password stashes intentionally, though that would be good to consider later
+
+
+DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv"
  
 sectionEnd
 
