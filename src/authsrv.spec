@@ -2,10 +2,9 @@
 Summary: AuthSrv Tool
 Name: authsrv
 Version: 2.0
-Release: 2
+Release: 3
 License: Distributable
 Group: System Environment/Base
-BuildArch: i386
 AutoReqProv: no
 
 Packager: Nathan Neulinger <nneul@neulinger.org>
