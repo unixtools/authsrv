@@ -1,9 +1,9 @@
 /* crypto/bf/bftest.c */
-/* Copyright (C) 1995-1997 Eric Young (eay@mincom.oz.au)
+/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
  * This package is an SSL implementation written
- * by Eric Young (eay@mincom.oz.au).
+ * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
  * 
  * This library is free for commercial and non-commercial use as long as
@@ -11,7 +11,7 @@
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@mincom.oz.au).
+ * except that the holder is Tim Hudson (tjh@cryptsoft.com).
  * 
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
@@ -31,12 +31,12 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *    "This product includes cryptographic software written by
- *     Eric Young (eay@mincom.oz.au)"
+ *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
  * 4. If you include any Windows specific code (or a derivative thereof) from 
  *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@mincom.oz.au)"
+ *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
  * 
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -62,22 +62,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <openssl/opensslconf.h> /* To see if OPENSSL_NO_BF is defined */
+
+#include "../e_os.h"
+
+#ifdef OPENSSL_NO_BF
+int main(int argc, char *argv[])
+{
+    printf("No BF support\n");
+    return(0);
+}
+#else
 #include "blowfish.h"
 
-char *bf_key[2]={
+#ifdef CHARSET_EBCDIC
+#include <openssl/ebcdic.h>
+#endif
+
+static char *bf_key[2]={
 	"abcdefghijklmnopqrstuvwxyz",
 	"Who is John Galt?"
 	};
 
 /* big endian */
-BF_LONG bf_plain[2][2]={
-	{0x424c4f57,0x46495348},
-	{0xfedcba98,0x76543210}
+static BF_LONG bf_plain[2][2]={
+	{0x424c4f57L,0x46495348L},
+	{0xfedcba98L,0x76543210L}
 	};
 
-BF_LONG bf_cipher[2][2]={
-	{0x324ed0fe,0xf413a203},
-	{0xcc91732b,0x8022f684}
+static BF_LONG bf_cipher[2][2]={
+	{0x324ed0feL,0xf413a203L},
+	{0xcc91732bL,0x8022f684L}
 	};
 /************/
 
@@ -216,16 +231,16 @@ static unsigned char ofb64_ok[]={
 	0x63,0xC2,0xCF,0x80,0xDA};
 
 #define KEY_TEST_NUM	25
-unsigned char key_test[KEY_TEST_NUM]={
+static unsigned char key_test[KEY_TEST_NUM]={
 	0xf0,0xe1,0xd2,0xc3,0xb4,0xa5,0x96,0x87,
 	0x78,0x69,0x5a,0x4b,0x3c,0x2d,0x1e,0x0f,
 	0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,
 	0x88};
 
-unsigned char key_data[8]=
+static unsigned char key_data[8]=
 	{0xFE,0xDC,0xBA,0x98,0x76,0x54,0x32,0x10};
 
-unsigned char key_out[KEY_TEST_NUM][8]={
+static unsigned char key_out[KEY_TEST_NUM][8]={
 	{0xF9,0xAD,0x59,0x7C,0x49,0xDB,0x00,0x5E},
 	{0xE9,0x1D,0x21,0xC1,0xD9,0x61,0xA6,0xD6},
 	{0xE9,0xC2,0xB7,0x0A,0x1B,0xC6,0x5C,0xF3},
@@ -252,10 +267,27 @@ unsigned char key_out[KEY_TEST_NUM][8]={
 	{0x05,0x04,0x4B,0x62,0xFA,0x52,0xD0,0x80},
 	};
 
-
-int print_test_data()
+static int test(void );
+static int print_test_data(void );
+int main(int argc, char *argv[])
 	{
-	int i,j;
+	int ret;
+
+	if (argc > 1)
+		ret=print_test_data();
+	else
+		ret=test();
+
+#ifdef OPENSSL_SYS_NETWARE
+    if (ret) printf("ERROR: %d\n", ret);
+#endif
+	EXIT(ret);
+	return(0);
+	}
+
+static int print_test_data(void)
+	{
+	unsigned int i,j;
 
 	printf("ecb test data\n");
 	printf("key bytes\t\tclear bytes\t\tcipher bytes\n");
@@ -282,7 +314,7 @@ int print_test_data()
 		printf("c=");
 		for (j=0; j<8; j++)
 			printf("%02X",key_out[i][j]);
-		printf(" k[%2d]=",i+1);
+		printf(" k[%2u]=",i+1);
 		for (j=0; j<i+1; j++)
 			printf("%02X",key_test[j]);
 		printf("\n");
@@ -295,87 +327,80 @@ int print_test_data()
 	printf("\niv[8]     = ");
 	for (j=0; j<8; j++)
 		printf("%02X",cbc_iv[j]);
-	printf("\ndata[%d]  = '%s'",strlen(cbc_data)+1,cbc_data);
-	printf("\ndata[%d]  = ",strlen(cbc_data)+1);
+	printf("\ndata[%d]  = '%s'",(int)strlen(cbc_data)+1,cbc_data);
+	printf("\ndata[%d]  = ",(int)strlen(cbc_data)+1);
 	for (j=0; j<strlen(cbc_data)+1; j++)
 		printf("%02X",cbc_data[j]);
 	printf("\n");
 	printf("cbc cipher text\n");
 	printf("cipher[%d]= ",32);
-	for (j=0; j<32+1; j++)
+	for (j=0; j<32; j++)
 		printf("%02X",cbc_ok[j]);
 	printf("\n");
 
 	printf("cfb64 cipher text\n");
-	printf("cipher[%d]= ",strlen(cbc_data)+1);
+	printf("cipher[%d]= ",(int)strlen(cbc_data)+1);
 	for (j=0; j<strlen(cbc_data)+1; j++)
 		printf("%02X",cfb64_ok[j]);
 	printf("\n");
 
 	printf("ofb64 cipher text\n");
-	printf("cipher[%d]= ",strlen(cbc_data)+1);
+	printf("cipher[%d]= ",(int)strlen(cbc_data)+1);
 	for (j=0; j<strlen(cbc_data)+1; j++)
 		printf("%02X",ofb64_ok[j]);
 	printf("\n");
 	return(0);
 	}
 
-int main(argc,argv)
-int argc;
-char *argv[];
-	{
-	int ret;
-
-	if (argc > 1)
-		ret=print_test_data();
-	else
-		ret=test();
-
-	exit(ret);
-	}
-
-int test()
+static int test(void)
 	{
 	unsigned char cbc_in[40],cbc_out[40],iv[8];
 	int i,n,err=0;
 	BF_KEY key;
 	BF_LONG data[2]; 
 	unsigned char out[8]; 
-	unsigned long len;
+	BF_LONG len;
+
+#ifdef CHARSET_EBCDIC
+	ebcdic2ascii(cbc_data, cbc_data, strlen(cbc_data));
+#endif
 
 	printf("testing blowfish in raw ecb mode\n");
 	for (n=0; n<2; n++)
 		{
+#ifdef CHARSET_EBCDIC
+		ebcdic2ascii(bf_key[n], bf_key[n], strlen(bf_key[n]));
+#endif
 		BF_set_key(&key,strlen(bf_key[n]),(unsigned char *)bf_key[n]);
 
 		data[0]=bf_plain[n][0];
 		data[1]=bf_plain[n][1];
-		BF_encrypt(data,&key,BF_ENCRYPT);
+		BF_encrypt(data,&key);
 		if (memcmp(&(bf_cipher[n][0]),&(data[0]),8) != 0)
 			{
 			printf("BF_encrypt error encrypting\n");
 			printf("got     :");
 			for (i=0; i<2; i++)
-				printf("%08lX ",data[i]);
+				printf("%08lX ",(unsigned long)data[i]);
 			printf("\n");
 			printf("expected:");
 			for (i=0; i<2; i++)
-				printf("%08lX ",bf_cipher[n][i]);
+				printf("%08lX ",(unsigned long)bf_cipher[n][i]);
 			err=1;
 			printf("\n");
 			}
 
-		BF_encrypt(&(data[0]),&key,BF_DECRYPT);
+		BF_decrypt(&(data[0]),&key);
 		if (memcmp(&(bf_plain[n][0]),&(data[0]),8) != 0)
 			{
 			printf("BF_encrypt error decrypting\n");
 			printf("got     :");
 			for (i=0; i<2; i++)
-				printf("%08lX ",data[i]);
+				printf("%08lX ",(unsigned long)data[i]);
 			printf("\n");
 			printf("expected:");
 			for (i=0; i<2; i++)
-				printf("%08lX ",bf_plain[n][i]);
+				printf("%08lX ",(unsigned long)bf_plain[n][i]);
 			printf("\n");
 			err=1;
 			}
@@ -423,7 +448,8 @@ int test()
 		{
 		BF_set_key(&key,n,key_test);
 		BF_ecb_encrypt(key_data,out,&key,BF_ENCRYPT);
-		if (memcmp(out,&(key_out[n-1][0]),8) != 0)
+		/* mips-sgi-irix6.5-gcc  vv  -mabi=64 bug workaround */
+		if (memcmp(out,&(key_out[i=n-1][0]),8) != 0)
 			{
 			printf("blowfish setkey error\n");
 			err=1;
@@ -434,9 +460,9 @@ int test()
 	len=strlen(cbc_data)+1;
 
 	BF_set_key(&key,16,cbc_key);
-	memset(cbc_in,0,40);
-	memset(cbc_out,0,40);
-	memcpy(iv,cbc_iv,8);
+	memset(cbc_in,0,sizeof cbc_in);
+	memset(cbc_out,0,sizeof cbc_out);
+	memcpy(iv,cbc_iv,sizeof iv);
 	BF_cbc_encrypt((unsigned char *)cbc_data,cbc_out,len,
 		&key,iv,BF_ENCRYPT);
 	if (memcmp(cbc_out,cbc_ok,32) != 0)
@@ -511,3 +537,4 @@ int test()
 
 	return(err);
 	}
+#endif

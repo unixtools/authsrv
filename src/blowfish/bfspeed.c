@@ -1,9 +1,9 @@
 /* crypto/bf/bfspeed.c */
-/* Copyright (C) 1995-1997 Eric Young (eay@mincom.oz.au)
+/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
  * This package is an SSL implementation written
- * by Eric Young (eay@mincom.oz.au).
+ * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
  * 
  * This library is free for commercial and non-commercial use as long as
@@ -11,7 +11,7 @@
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@mincom.oz.au).
+ * except that the holder is Tim Hudson (tjh@cryptsoft.com).
  * 
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
@@ -31,12 +31,12 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *    "This product includes cryptographic software written by
- *     Eric Young (eay@mincom.oz.au)"
+ *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
  * 4. If you include any Windows specific code (or a derivative thereof) from 
  *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@mincom.oz.au)"
+ *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
  * 
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -59,19 +59,20 @@
 /* 11-Sep-92 Andrew Daviel   Support for Silicon Graphics IRIX added */
 /* 06-Apr-92 Luke Brennan    Support for VMS and add extra signal calls */
 
-#ifndef MSDOS
+#if !defined(OPENSSL_SYS_MSDOS) && (!defined(OPENSSL_SYS_VMS) || defined(__DECC)) && !defined(OPENSSL_SYS_MACOSX)
 #define TIMES
 #endif
 
 #include <stdio.h>
-#ifndef MSDOS
-#include <unistd.h>
-#else
-#include <io.h>
-extern int exit();
-#endif
+
+#include <openssl/e_os2.h>
+#include OPENSSL_UNISTD_IO
+OPENSSL_DECLARE_EXIT
+
+#ifndef OPENSSL_SYS_NETWARE
 #include <signal.h>
-#ifndef VMS
+#endif
+
 #ifndef _IRIX
 #include <time.h>
 #endif
@@ -79,20 +80,21 @@ extern int exit();
 #include <sys/types.h>
 #include <sys/times.h>
 #endif
-#else /* VMS */
-#include <types.h>
-struct tms {
-	time_t tms_utime;
-	time_t tms_stime;
-	time_t tms_uchild;	/* I dunno...  */
-	time_t tms_uchildsys;	/* so these names are a guess :-) */
-	}
+
+/* Depending on the VMS version, the tms structure is perhaps defined.
+   The __TMS macro will show if it was.  If it wasn't defined, we should
+   undefine TIMES, since that tells the rest of the program how things
+   should be handled.				-- Richard Levitte */
+#if defined(OPENSSL_SYS_VMS_DECC) && !defined(__TMS)
+#undef TIMES
 #endif
+
 #ifndef TIMES
 #include <sys/timeb.h>
 #endif
 
-#ifdef sun
+#if defined(sun) || defined(__ultrix)
+#define _POSIX_SOURCE
 #include <limits.h>
 #include <sys/param.h>
 #endif
@@ -102,11 +104,7 @@ struct tms {
 /* The following if from times(3) man page.  It may need to be changed */
 #ifndef HZ
 #ifndef CLK_TCK
-#ifndef VMS
 #define HZ	100.0
-#else /* VMS */
-#define HZ	100.0
-#endif
 #else /* CLK_TCK */
 #define HZ ((double)CLK_TCK)
 #endif
@@ -115,12 +113,7 @@ struct tms {
 #define BUFSIZE	((long)1024)
 long run=0;
 
-#ifndef NOPROTO
 double Time_F(int s);
-#else
-double Time_F();
-#endif
-
 #ifdef SIGALRM
 #if defined(__STDC__) || defined(sgi) || defined(_AIX)
 #define SIGRETTYPE void
@@ -128,14 +121,8 @@ double Time_F();
 #define SIGRETTYPE int
 #endif
 
-#ifndef NOPROTO
 SIGRETTYPE sig_done(int sig);
-#else
-SIGRETTYPE sig_done();
-#endif
-
-SIGRETTYPE sig_done(sig)
-int sig;
+SIGRETTYPE sig_done(int sig)
 	{
 	signal(SIGALRM,sig_done);
 	run=0;
@@ -148,8 +135,7 @@ int sig;
 #define START	0
 #define STOP	1
 
-double Time_F(s)
-int s;
+double Time_F(int s)
 	{
 	double ret;
 #ifdef TIMES
@@ -185,9 +171,7 @@ int s;
 #endif
 	}
 
-int main(argc,argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 	{
 	long count;
 	static unsigned char buf[BUFSIZE];
@@ -202,7 +186,7 @@ char **argv;
 #endif
 
 #ifndef TIMES
-	printf("To get the most acurate results, try to run this\n");
+	printf("To get the most accurate results, try to run this\n");
 	printf("program when this computer is idle.\n");
 #endif
 
@@ -217,7 +201,7 @@ char **argv;
 		count*=2;
 		Time_F(START);
 		for (i=count; i; i--)
-			BF_encrypt(data,&sch,BF_ENCRYPT);
+			BF_encrypt(data,&sch);
 		d=Time_F(STOP);
 		} while (d < 3.0);
 	ca=count/512;
@@ -235,10 +219,15 @@ char **argv;
 #endif
 
 	Time_F(START);
-	for (count=0,run=1; COND(ca); count++)
+	for (count=0,run=1; COND(ca); count+=4)
+		{
 		BF_set_key(&sch,16,key);
+		BF_set_key(&sch,16,key);
+		BF_set_key(&sch,16,key);
+		BF_set_key(&sch,16,key);
+		}
 	d=Time_F(STOP);
-	printf("%ld blowfish set_key's in %.2f seconds\n",count,d);
+	printf("%ld BF_set_key's in %.2f seconds\n",count,d);
 	a=((double)COUNT(ca))/d;
 
 #ifdef SIGALRM
@@ -248,11 +237,14 @@ char **argv;
 	printf("Doing BF_encrypt %ld times\n",cb);
 #endif
 	Time_F(START);
-	for (count=0,run=1; COND(cb); count++)
+	for (count=0,run=1; COND(cb); count+=4)
 		{
 		BF_LONG data[2];
 
-		BF_encrypt(data,&sch,BF_ENCRYPT);
+		BF_encrypt(data,&sch);
+		BF_encrypt(data,&sch);
+		BF_encrypt(data,&sch);
+		BF_encrypt(data,&sch);
 		}
 	d=Time_F(STOP);
 	printf("%ld BF_encrypt's in %.2f second\n",count,d);
@@ -275,11 +267,11 @@ char **argv;
 		count,BUFSIZE,d);
 	c=((double)COUNT(cc)*BUFSIZE)/d;
 
-	printf("blowfish set_key       per sec = %12.2f (%7.1fuS)\n",a,1.0e6/a);
-	printf("Blowfish raw ecb bytes per sec = %12.2f (%7.1fuS)\n",b,8.0e6/b);
-	printf("Blowfish cbc     bytes per sec = %12.2f (%7.1fuS)\n",c,8.0e6/c);
+	printf("Blowfish set_key       per sec = %12.3f (%9.3fuS)\n",a,1.0e6/a);
+	printf("Blowfish raw ecb bytes per sec = %12.3f (%9.3fuS)\n",b,8.0e6/b);
+	printf("Blowfish cbc     bytes per sec = %12.3f (%9.3fuS)\n",c,8.0e6/c);
 	exit(0);
-#if defined(LINT) || defined(MSDOS)
+#if defined(LINT) || defined(OPENSSL_SYS_MSDOS)
 	return(0);
 #endif
 	}

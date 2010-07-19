@@ -1,9 +1,9 @@
 /* crypto/bf/blowfish.h */
-/* Copyright (C) 1995-1997 Eric Young (eay@mincom.oz.au)
+/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
  * This package is an SSL implementation written
- * by Eric Young (eay@mincom.oz.au).
+ * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
  * 
  * This library is free for commercial and non-commercial use as long as
@@ -11,7 +11,7 @@
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@mincom.oz.au).
+ * except that the holder is Tim Hudson (tjh@cryptsoft.com).
  * 
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
@@ -31,12 +31,12 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *    "This product includes cryptographic software written by
- *     Eric Young (eay@mincom.oz.au)"
+ *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
  * 4. If you include any Windows specific code (or a derivative thereof) from 
  *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@mincom.oz.au)"
+ *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
  * 
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -59,18 +59,41 @@
 #ifndef HEADER_BLOWFISH_H
 #define HEADER_BLOWFISH_H
 
+#include <openssl/e_os2.h>
+
 #ifdef  __cplusplus
 extern "C" {
+#endif
+
+#ifdef OPENSSL_NO_BF
+#error BF is disabled.
 #endif
 
 #define BF_ENCRYPT	1
 #define BF_DECRYPT	0
 
-/* If you make this 'unsigned int' the pointer variants will work on
- * the Alpha, otherwise they will not.  Strangly using the '8 byte'
- * BF_LONG and the default 'non-pointer' inner loop is the best configuration
- * for the Alpha */
+/*
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * ! BF_LONG has to be at least 32 bits wide. If it's wider, then !
+ * ! BF_LONG_LOG2 has to be defined along.                        !
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+
+#if defined(__LP32__)
 #define BF_LONG unsigned long
+#elif defined(OPENSSL_SYS_CRAY) || defined(__ILP64__)
+#define BF_LONG unsigned long
+#define BF_LONG_LOG2 3
+/*
+ * _CRAY note. I could declare short, but I have no idea what impact
+ * does it have on performance on none-T3E machines. I could declare
+ * int, but at least on C90 sizeof(int) can be chosen at compile time.
+ * So I've chosen long...
+ *					<appro@fy.chalmers.se>
+ */
+#else
+#define BF_LONG unsigned int
+#endif
 
 #define BF_ROUNDS	16
 #define BF_BLOCK	8
@@ -81,31 +104,21 @@ typedef struct bf_key_st
 	BF_LONG S[4*256];
 	} BF_KEY;
 
-#ifndef NOPROTO
  
-void BF_set_key(BF_KEY *key, int len, unsigned char *data);
-void BF_ecb_encrypt(unsigned char *in,unsigned char *out,BF_KEY *key,
-	int encrypt);
-void BF_encrypt(BF_LONG *data,BF_KEY *key,int encrypt);
-void BF_cbc_encrypt(unsigned char *in, unsigned char *out, long length,
-	BF_KEY *ks, unsigned char *iv, int encrypt);
-void BF_cfb64_encrypt(unsigned char *in, unsigned char *out, long length,
-	BF_KEY *schedule, unsigned char *ivec, int *num, int encrypt);
-void BF_ofb64_encrypt(unsigned char *in, unsigned char *out, long length,
-	BF_KEY *schedule, unsigned char *ivec, int *num);
-char *BF_options(void);
+void BF_set_key(BF_KEY *key, int len, const unsigned char *data);
 
-#else
+void BF_encrypt(BF_LONG *data,const BF_KEY *key);
+void BF_decrypt(BF_LONG *data,const BF_KEY *key);
 
-void BF_set_key();
-void BF_ecb_encrypt();
-void BF_encrypt();
-void BF_cbc_encrypt();
-void BF_cfb64_encrypt();
-void BF_ofb64_encrypt();
-char *BF_options();
-
-#endif
+void BF_ecb_encrypt(const unsigned char *in, unsigned char *out,
+	const BF_KEY *key, int enc);
+void BF_cbc_encrypt(const unsigned char *in, unsigned char *out, long length,
+	const BF_KEY *schedule, unsigned char *ivec, int enc);
+void BF_cfb64_encrypt(const unsigned char *in, unsigned char *out, long length,
+	const BF_KEY *schedule, unsigned char *ivec, int *num, int enc);
+void BF_ofb64_encrypt(const unsigned char *in, unsigned char *out, long length,
+	const BF_KEY *schedule, unsigned char *ivec, int *num);
+const char *BF_options(void);
 
 #ifdef  __cplusplus
 }

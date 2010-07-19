@@ -1,9 +1,9 @@
 /* crypto/bf/bf_skey.c */
-/* Copyright (C) 1995-1997 Eric Young (eay@mincom.oz.au)
+/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
  * This package is an SSL implementation written
- * by Eric Young (eay@mincom.oz.au).
+ * by Eric Young (eay@cryptsoft.com).
  * The implementation was written so as to conform with Netscapes SSL.
  * 
  * This library is free for commercial and non-commercial use as long as
@@ -11,7 +11,7 @@
  * apply to all code found in this distribution, be it the RC4, RSA,
  * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
  * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@mincom.oz.au).
+ * except that the holder is Tim Hudson (tjh@cryptsoft.com).
  * 
  * Copyright remains Eric Young's, and as such any Copyright notices in
  * the code are not to be removed.
@@ -31,12 +31,12 @@
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
  *    "This product includes cryptographic software written by
- *     Eric Young (eay@mincom.oz.au)"
+ *     Eric Young (eay@cryptsoft.com)"
  *    The word 'cryptographic' can be left out if the rouines from the library
  *    being used are not cryptographic related :-).
  * 4. If you include any Windows specific code (or a derivative thereof) from 
  *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@mincom.oz.au)"
+ *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
  * 
  * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -62,17 +62,14 @@
 #include "bf_locl.h"
 #include "bf_pi.h"
 
-void BF_set_key(key,len,data)
-BF_KEY *key;
-int len;
-unsigned char *data;
+void BF_set_key(BF_KEY *key, int len, const unsigned char *data)
 	{
 	int i;
 	BF_LONG *p,ri,in[2];
-	unsigned char *d,*end;
+	const unsigned char *d,*end;
 
 
-	memcpy((char *)key,(char *)&bf_init,sizeof(BF_KEY));
+	memcpy(key,&bf_init,sizeof(BF_KEY));
 	p=key->P;
 
 	if (len > ((BF_ROUNDS+2)*4)) len=(BF_ROUNDS+2)*4;
@@ -103,7 +100,7 @@ unsigned char *data;
 	in[1]=0L;
 	for (i=0; i<(BF_ROUNDS+2); i+=2)
 		{
-		BF_encrypt(in,key,BF_ENCRYPT);
+		BF_encrypt(in,key);
 		p[i  ]=in[0];
 		p[i+1]=in[1];
 		}
@@ -111,7 +108,7 @@ unsigned char *data;
 	p=key->S;
 	for (i=0; i<4*256; i+=2)
 		{
-		BF_encrypt(in,key,BF_ENCRYPT);
+		BF_encrypt(in,key);
 		p[i  ]=in[0];
 		p[i+1]=in[1];
 		}
