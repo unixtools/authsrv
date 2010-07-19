@@ -1,8 +1,8 @@
 
 Summary: AuthSrv Tool
 Name: authsrv
-Version: 2.0
-Release: 3
+Version: 2.1
+Release: 1
 License: Distributable
 Group: System Environment/Base
 AutoReqProv: no
