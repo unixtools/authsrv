@@ -1,23 +1,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#ifndef WINDOWS
 #include <pwd.h>
-#endif
 #include "authsrv.h"
 #include "blowfish.h"
 #include "subs.h"
-#ifndef WINDOWS
 #include <syslog.h>
 #include <krb5.h>
-#endif
 
 krb5_ccache krb5util_ccache = NULL;
 krb5_context krb5util_context;
 
 #ifdef WINDOWS
-#error auth executable cannot be built on windows
-#endif
+int main(int argc, char *argv[])
+{
+    exit(0);
+}
+#else
 
 int authenticate(char *user, char *pass);
 
@@ -37,17 +36,12 @@ int main(int argc, char *argv[])
 		exit(1);
 	}	
 
-#ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
 		fprintf(stderr, "couldn't get real username\n");
 		exit(1);
 	}
 	owner = strdup(userpw->pw_name);
-#else
-    /* on windows, owner is forced to 'common' */
-    owner = strdup("common");
-#endif
 
 	user = argv[1];
 	if ( argc > 2 )
@@ -83,10 +77,8 @@ int main(int argc, char *argv[])
 	encrypted = FileToDataBlock(filename);
 	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);
 
-#ifndef WINDOWS
 	/* switch back to real uid before authenticating so we can access ccache */
 	setuid(getuid());
-#endif
 
 	/* now authenticate */
 	authenticate(user, (char *) decrypted->data);
@@ -191,3 +183,4 @@ int authenticate(char *user, char *pass)
 	return(0);
 }
 
+#endif
