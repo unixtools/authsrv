@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 #endif
 
 	/* now authenticate */
-	authenticate(user, decrypted->data);
+	authenticate(user, (char *) decrypted->data);
 	exit(0);
 }
 
