@@ -3,7 +3,7 @@ DATADIR=/usr/share/authsrv
 
 LIBS = -L../blowfish -lblowfish
 INC = -I../blowfish -I../common
-CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\" -DKRB5_DEPRECATED=1
+CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
 
 INSTALL = install -c
 
