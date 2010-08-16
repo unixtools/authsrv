@@ -88,45 +88,19 @@ int main(int argc, char *argv[])
 
 int authenticate(char *user, char *pass)
 {
-	krb5_data tgtname = {
-		0,
-		KRB5_TGS_NAME_SIZE,
-		KRB5_TGS_NAME
-	};
 	krb5_principal kprinc;
-	krb5_principal server;
 	krb5_creds kcreds;
-	int options = 0;
-	krb5_address **addrs = (krb5_address **)0;
-	krb5_preauthtype *preauth = NULL;
+    krb5_get_init_creds_opt options;
 
 	int used_own_krb5ccname = 0;
 	int retval;
-        static char ccache[100];
-
-	/* Set the CCache to use */
-	if ( ! getenv("KRB5CCNAME") )
-	{
-        sprintf(ccache, "KRB5CCNAME=/tmp/krb5cc_authsrv_u%d_p%d", getuid(), getpid());
-        putenv(ccache);
-		used_own_krb5ccname = 1;
-	}
-
-	/* Set ticket to be forwardable */
-	options |= KDC_OPT_FORWARDABLE;
+    static char ccache[100];
 
 	if ( (retval=krb5_init_context(&krb5util_context)))
 	{
 		syslog(LOG_ERR, "init_context failed (%s)", error_message(retval));
 		return 1;
 	}
-
-	if ( (retval = krb5_cc_default(krb5util_context, &krb5util_ccache)) )
-	{
-		syslog(LOG_ERR, "cc_default failed (%s)", error_message(retval));
-		return 1;
-	}
-
 
 	if ( (retval = krb5_parse_name(krb5util_context, user, &kprinc)) )
 	{
@@ -135,18 +109,28 @@ int authenticate(char *user, char *pass)
 	}
 
 	memset((char *)&kcreds, 0, sizeof(kcreds));
-	kcreds.client = kprinc;
-	
-	if ((retval = krb5_build_principal_ext(krb5util_context, &server,
-		krb5_princ_realm(krb5util_context, kprinc)->length,
-		krb5_princ_realm(krb5util_context, kprinc)->data,
-		tgtname.length,
-		tgtname.data,
-		krb5_princ_realm(krb5util_context, kprinc)->length,
-		krb5_princ_realm(krb5util_context, kprinc)->data,
-		0)))
+
+	/* Set ticket to be forwardable */
+    krb5_get_init_creds_opt_init(&options);
+    krb5_get_init_creds_opt_set_forwardable (&options, 1);
+
+    if ((retval = krb5_get_init_creds_password(krb5util_context, &kcreds, kprinc,
+        pass, NULL, NULL, 0, NULL, &options)) )
+    {
+        syslog(LOG_ERR, "krb5_get_init_creds_password failed (%s)", error_message(retval));
+        return 1;
+    } 
+
+	/* Set the CCache to use */
+	if ( ! getenv("KRB5CCNAME") )
 	{
-		syslog(LOG_ERR, "build_princ failed (%s)", error_message(retval));
+        sprintf(ccache, "KRB5CCNAME=/tmp/krb5cc_authsrv_u%d_p%d", getuid(), getpid());
+        putenv(ccache);
+		used_own_krb5ccname = 1;
+	}
+	if ( (retval = krb5_cc_default(krb5util_context, &krb5util_ccache)) )
+	{
+		syslog(LOG_ERR, "cc_default failed (%s)", error_message(retval));
 		return 1;
 	}
 
@@ -158,23 +142,11 @@ int authenticate(char *user, char *pass)
 		return 1;
 	}
 
-	kcreds.server = server;
-	retval = krb5_get_in_tkt_with_password(krb5util_context,
-		options,
-		addrs,
-		NULL,
-		preauth,
-		pass,
-		krb5util_ccache,
-		&kcreds,
-		0);
-
-	if ( retval )
-	{
-		syslog(LOG_ERR, "get_in_tkt failed (%s)", error_message(retval));
-        krb5_cc_destroy(krb5util_context, krb5util_ccache);
-		return 1;
-	}
+    if ((retval = krb5_cc_store_cred(krb5util_context, krb5util_ccache, &kcreds)))
+    {
+        syslog(LOG_ERR, "krb5_cc_store_cred failed (%s)", error_message(retval));
+        return 1;
+    }
 
 	if ( used_own_krb5ccname )
 	{
