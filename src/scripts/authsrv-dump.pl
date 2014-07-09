@@ -14,13 +14,26 @@ $| = 1;
 no warnings qw(taint);
 
 use MIME::Base64;
+use Getopt::Long;
 use strict;
 
-print "<authsrv>\n";
+my $json;
+my $help;
+my $res = GetOptions(
+    "json+" => \$json,
+    "help+" => \$help,
+);
+
+if ( !$res || $help ) {
+    print "Usage: $0 [--help] [--json]\n";
+    exit(0);
+}
 
 #
 # Retrieve listing of authsrv stashes, and output each one
 #
+my @entries = ();
+
 open( CMDIN, "authsrv-list|" );
 while ( chomp( my $line = <CMDIN> ) ) {
     my ( $owner, $user, $instance, $tstamp ) = split( /\//, $line );
@@ -38,17 +51,39 @@ while ( chomp( my $line = <CMDIN> ) ) {
     close(FETCH);
 
     my $encpw = encode_base64( $pw, "" );
+    push(
+        @entries,
+        {   owner     => $owner,
+            user      => $user,
+            instance  => $instance,
+            timestamp => $tstamp,
+            password  => $encpw,
+        }
+    );
 
-    print "  <entry>\n";
-    print "    <owner>$owner</owner>\n";
-    print "    <user>$user</user>\n";
-    print "    <instance>$instance</instance>\n";
-    print "    <timestamp>$tstamp</timestamp>\n";
-    print "    <password>$encpw</password>\n";
-    print "  </entry>\n";
 }
 close(CMDIN);
 
-print "</authsrv>\n";
+if ( !$json ) {
+    print "<authsrv>\n";
+
+    foreach my $entry (@entries) {
+        print "  <entry>\n";
+        print "    <owner>",     $entry->{owner},     "</owner>\n";
+        print "    <user>",      $entry->{user},      "</user>\n";
+        print "    <instance>",  $entry->{instance},  "</instance>\n";
+        print "    <timestamp>", $entry->{timestamp}, "</timestamp>\n";
+        print "    <password>",  $entry->{password},  "</password>\n";
+        print "  </entry>\n";
+    }
+    print "</authsrv>\n";
+}
+elsif ($json) {
+    eval "use JSON";
+    my $j = new JSON;
+
+    $j->canonical(1);
+    print $j->pretty->encode( \@entries ), "\n";
+}
 
 exit(0);
