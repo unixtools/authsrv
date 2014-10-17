@@ -124,12 +124,12 @@ foreach my $entry (@entries) {
     my $enc;
     if ( $^O !~ /Win/ ) {
         unless ( open( $enc, "|-" ) ) {
-            exec( "authsrv-encrypt", $owner, $user, $instance );
+            exec( "authsrv-encrypt-raw", $owner, $user, $instance );
             exit(0);
         }
     }
     else {
-        open( $enc, "|-" ) || exec( "authsrv-encrypt", $owner, $user, $instance );
+        open( $enc, "|-" ) || exec( "authsrv-encrypt-raw", $owner, $user, $instance );
     }
     print $enc $password, "\n";
     close($enc);

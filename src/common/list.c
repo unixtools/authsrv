@@ -22,7 +22,6 @@ void scan_instances(char *owner, char *user, char *instance);
 
 int main(int argc, char *argv[])
 {
-	char res[21];
 	char *user = NULL, *instance = NULL, *owner = NULL;
 #ifndef WINDOWS
 	struct passwd *userpw;
@@ -37,7 +36,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr,"\t<instance> is the instance to list (optional)\n");
 		exit(1);
 	}	
-	res[20] = 0;
 
 #ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )

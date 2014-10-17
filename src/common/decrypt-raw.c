@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
 
 	encrypted = FileToDataBlock(filename);
 	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);
-	printf("%s\n", decrypted->data);
+    /* no trailing newline */
+	printf("%s", decrypted->data);
 	exit(0);
 }
 

@@ -1,0 +1,11 @@
+src/blowfish/*.[oa]
+src/unix/authsrv-auth
+src/unix/authsrv-decrypt
+src/unix/authsrv-decrypt-blob
+src/unix/authsrv-delete
+src/unix/authsrv-encrypt
+src/unix/authsrv-encrypt-blob
+src/unix/authsrv-list
+src/unix/*.o
+src/windows/*.exe
+src/windows/*.o
