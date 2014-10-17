@@ -92,6 +92,6 @@ $(DATADIR)/host-key:
 
 clean:
 	rm -f *.a *.o 
-	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-encrypt-block authsrv-decrypt-raw
+	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-encrypt-raw authsrv-decrypt-raw
 	cd ../blowfish && $(MAKE) clean
 
