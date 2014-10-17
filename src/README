@@ -27,13 +27,25 @@ Windows Builds:
 Install nullsoft installer 2.46
 Install Mingw from sourceforge (0.6.2-beta-20131004-1)
 	Choose mingw-developer-toolkit, mingw32-base, msys-base
+	Create a C:\work directory
 	Create C:\mingw\msys\1.0\etc\fstab containing
 		C:\mingw /mingw
+		C:\work /work
 	Create shortcut on desktop to run:
 		C:\mingw\msys\1.0\msys.bat
 	Launch that shortcut to bring up shell
 	mingw-get install msys-libopenssl	
 	mingw-get install msys-vim
 	ln -s /include/* /mingw/include/*
+
+Check out and build authsrv
+	cd /work
+	git clone https://github.com/unixtools/authsrv
+	cd authsrv/src
+	make
+
+Build the installer
+	Browse to C:/work in windows UI
+	Right click on the NSI file in authsrv/src/windows/authsrv.nsi and choose to compile
 	
 
