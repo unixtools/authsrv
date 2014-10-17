@@ -1,7 +1,7 @@
 
 Summary: AuthSrv Tool
 Name: authsrv
-Version: 2.4
+Version: 3.0
 Release: 1
 License: Distributable
 Group: System Environment/Base
@@ -52,8 +52,10 @@ chmod -R go-rwx %{_datadir}/authsrv
 
 %attr(4755, root, root) %{_bindir}/authsrv-auth
 %attr(4755, root, root) %{_bindir}/authsrv-decrypt
+%attr(4755, root, root) %{_bindir}/authsrv-decrypt-raw
 %attr(4755, root, root) %{_bindir}/authsrv-delete
 %attr(4755, root, root) %{_bindir}/authsrv-encrypt
+%attr(4755, root, root) %{_bindir}/authsrv-encrypt-raw
 %attr(4755, root, root) %{_bindir}/authsrv-list
 
 %attr(0700, root, root) %{_datadir}/authsrv
