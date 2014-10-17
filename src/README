@@ -20,3 +20,10 @@ code the same on unix and windows, and to keep passwords out of script source fi
 
 
 Please see blowfish/COPYRIGHT for license information for the included blowfish library.
+
+
+Windows Builds:
+---------------
+Install cygwin 32 and 64 bit.
+Install nullsoft installer 2.46
+
