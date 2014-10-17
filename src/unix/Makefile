@@ -43,8 +43,8 @@ authsrv-decrypt: $(BFLIB) decrypt.o subs.o
 decrypt.o: ../common/decrypt.c
 	$(CC) $(INC) -c ../common/decrypt.c
 
-authsrv-decrypt-raw: $(BFLIB) decrypt-raw.o subs.o
-	$(CC) -o authsrv-decrypt-raw decrypt-raw.o subs.o $(LIBS)
+authsrv-raw-decrypt: $(BFLIB) decrypt-raw.o subs.o
+	$(CC) -o authsrv-raw-decrypt decrypt-raw.o subs.o $(LIBS)
 
 decrypt-raw.o: ../common/decrypt-raw.c
 	$(CC) $(INC) -c ../common/decrypt-raw.c
