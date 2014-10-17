@@ -9,7 +9,7 @@ INSTALL = install -c
 
 BFLIB = ../blowfish/libblowfish.a
 
-all: authsrv-auth authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-encrypt-raw authsrv-decrypt-raw
+all: authsrv-auth authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-raw-encrypt authsrv-raw-decrypt
 
 build: 
 	$(MAKE) clean
@@ -31,8 +31,8 @@ authsrv-encrypt: $(BFLIB) encrypt.o subs.o
 encrypt.o: ../common/encrypt.c
 	$(CC) $(INC) -c ../common/encrypt.c
 
-authsrv-encrypt-raw: $(BFLIB) encrypt-raw.o subs.o
-	$(CC) -o authsrv-encrypt-raw encrypt-raw.o subs.o $(LIBS)
+authsrv-raw-encrypt: $(BFLIB) encrypt-raw.o subs.o
+	$(CC) -o authsrv-raw-encrypt encrypt-raw.o subs.o $(LIBS)
 
 encrypt-raw.o: ../common/encrypt-raw.c
 	$(CC) $(INC) -c ../common/encrypt-raw.c
@@ -65,11 +65,11 @@ subs.o: ../common/subs.c
 	$(CC) $(INC) -c ../common/subs.c
 
 # Do not put key on this, otherwise will include a key in an RPM build
-install: dirs authsrv-encrypt authsrv-decrypt authsrv-encrypt-raw authsrv-decrypt-raw authsrv-delete authsrv-list
+install: dirs authsrv-encrypt authsrv-decrypt authsrv-raw-encrypt authsrv-raw-decrypt authsrv-delete authsrv-list
 	$(INSTALL) -m 4755 -o root -g root authsrv-encrypt $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-decrypt $(BINDIR)
-	$(INSTALL) -m 4755 -o root -g root authsrv-encrypt-raw $(BINDIR)
-	$(INSTALL) -m 4755 -o root -g root authsrv-decrypt-raw $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-raw-encrypt $(BINDIR)
+	$(INSTALL) -m 4755 -o root -g root authsrv-raw-decrypt $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-delete $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-list $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-auth $(BINDIR)
@@ -92,6 +92,6 @@ $(DATADIR)/host-key:
 
 clean:
 	rm -f *.a *.o 
-	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-encrypt-raw authsrv-decrypt-raw
+	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-raw-encrypt authsrv-raw-decrypt
 	cd ../blowfish && $(MAKE) clean
 

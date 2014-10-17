@@ -52,7 +52,7 @@ chmod -R go-rwx %{_datadir}/authsrv
 
 %attr(4755, root, root) %{_bindir}/authsrv-auth
 %attr(4755, root, root) %{_bindir}/authsrv-decrypt
-%attr(4755, root, root) %{_bindir}/authsrv-decrypt-raw
+%attr(4755, root, root) %{_bindir}/authsrv-raw-decrypt
 %attr(4755, root, root) %{_bindir}/authsrv-delete
 %attr(4755, root, root) %{_bindir}/authsrv-encrypt
 %attr(4755, root, root) %{_bindir}/authsrv-encrypt-raw

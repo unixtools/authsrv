@@ -7,7 +7,7 @@ CC = gcc -g -O2 -Wall -DWINDOWS
 
 BFLIB = ../blowfish/libblowfish.a
 
-all: authsrv-encrypt authsrv-decrypt authsrv-encrypt-raw authsrv-decrypt-raw authsrv-delete authsrv-list
+all: authsrv-encrypt authsrv-decrypt authsrv-raw-encrypt authsrv-raw-decrypt authsrv-delete authsrv-list
 
 build: 
 	$(MAKE) clean
@@ -23,7 +23,7 @@ authsrv-encrypt: $(BFLIB) encrypt.o subs.o
 encrypt.o: ../common/encrypt.c
 	$(CC) $(INC) -c ../common/encrypt.c
 
-authsrv-encrypt-raw: $(BFLIB) encrypt-raw.o subs.o
+authsrv-raw-encrypt: $(BFLIB) encrypt-raw.o subs.o
 	$(CC) -o authsrv-encrypt encrypt-raw.o subs.o $(LIBS)
 
 encrypt-raw.o: ../common/encrypt-raw.c
@@ -35,8 +35,8 @@ authsrv-decrypt: $(BFLIB) decrypt.o subs.o
 decrypt.o: ../common/decrypt.c
 	$(CC) $(INC) -c ../common/decrypt.c
 
-authsrv-decrypt-raw: $(BFLIB) decrypt-raw.o subs.o
-	$(CC) -o authsrv-decrypt-raw decrypt-raw.o subs.o $(LIBS)
+authsrv-raw-decrypt: $(BFLIB) decrypt-raw.o subs.o
+	$(CC) -o authsrv-raw-decrypt decrypt-raw.o subs.o $(LIBS)
 
 decrypt-raw.o: ../common/decrypt-raw.c
 	$(CC) $(INC) -c ../common/decrypt-raw.c
@@ -58,6 +58,6 @@ subs.o: ../common/subs.c
 
 clean:
 	rm -f *.a *.o *.exe *~
-	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-encrypt-raw authsrv-decrypt-raw
+	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-raw-encrypt authsrv-raw-decrypt
 	cd ../blowfish && $(MAKE) clean
 
