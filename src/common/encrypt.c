@@ -18,7 +18,9 @@ int main(int argc, char *argv[])
 	char *owner, *user, *instance;
 	char filename[400];
 	struct DataBlock data;
+#ifndef WINDOWS
 	struct passwd *userpw;
+#endif
 	char passwd[MAX_DATA_LEN];
 	int i;
 

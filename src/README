@@ -24,6 +24,16 @@ Please see blowfish/COPYRIGHT for license information for the included blowfish 
 
 Windows Builds:
 ---------------
-Install cygwin 32 and 64 bit.
 Install nullsoft installer 2.46
+Install Mingw from sourceforge (0.6.2-beta-20131004-1)
+	Choose mingw-developer-toolkit, mingw32-base, msys-base
+	Create C:\mingw\msys\1.0\etc\fstab containing
+		C:\mingw /mingw
+	Create shortcut on desktop to run:
+		C:\mingw\msys\1.0\msys.bat
+	Launch that shortcut to bring up shell
+	mingw-get install msys-libopenssl	
+	mingw-get install msys-vim
+	ln -s /include/* /mingw/include/*
+	
 
