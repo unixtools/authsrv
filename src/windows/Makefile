@@ -24,7 +24,7 @@ encrypt.o: ../common/encrypt.c
 	$(CC) $(INC) -c ../common/encrypt.c
 
 authsrv-raw-encrypt: $(BFLIB) encrypt-raw.o subs.o
-	$(CC) -o authsrv-encrypt encrypt-raw.o subs.o $(LIBS)
+	$(CC) -o authsrv-raw-encrypt encrypt-raw.o subs.o $(LIBS)
 
 encrypt-raw.o: ../common/encrypt-raw.c
 	$(CC) $(INC) -c ../common/encrypt-raw.c
