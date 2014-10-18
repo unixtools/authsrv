@@ -41,12 +41,12 @@ while ( chomp( my $line = <CMDIN> ) ) {
 
     if ( $^O !~ /Win/ ) {
         unless ( open( FETCH, "-|" ) ) {
-            exec( "authsrv-decrypt-raw", $owner, $user, $instance );
+            exec( "authsrv-raw-decrypt", $owner, $user, $instance );
             exit(0);
         }
     }
     else {
-        open( FETCH, "authsrv-decrypt-raw $owner $user $instance|" );
+        open( FETCH, "authsrv-raw-decrypt $owner $user $instance|" );
     }
     my $pw = join( "", <FETCH> );
     close(FETCH);
