@@ -15,7 +15,7 @@ my %STASHED;
 &get_list();
 while (1) {
     print "\nAuthSrv: $STASHCOUNT stashed passwords\n";
-    print "Action: (S)tash (D)elete (L)ist (P)rint (Q)uit: ";
+    print "Action: (S)tash (D)elete (L)ist (P)rint (T)est System (Q)uit: ";
     chomp( my $line = <STDIN> );
     last if ( !defined($line) );
     $line = lc $line;
@@ -31,6 +31,9 @@ while (1) {
     }
     elsif ( $line eq "p" || $line eq "print" ) {
         &handle_print();
+    }
+    elsif ( $line eq "t" || $line eq "test" ) {
+        &handle_self_test();
     }
     elsif ( $line eq "q" || $line eq "quit" || $line eq "exit" ) {
         last;
@@ -299,4 +302,40 @@ sub prompt_pw {
         print "Passwords do not match!\n";
         return undef;
     }
+}
+
+# Begin-Doc
+# Name: handle_self_test
+# Description: run a sweep of a large number of possible passwords and validate that they all come back clean
+# Returns: error if failure occurs
+# End-Doc
+sub handle_self_test {
+    my $owner;
+    if ( $^O =~ /win/i ) {
+        $owner = "common";
+    }
+    else {
+        $owner = ( getpwuid($<) )[0];
+    }
+    my $user = "_SELF_TEST_";
+    my $instance = "_SELF_TEST_";
+
+    foreach my $len ( 1 .. 120 )
+    {
+        my $pw = "x" x $len;
+        open(my $out, "|authsrv-encrypt $owner $user $instance");
+        print $out $pw, "\n";
+        close($out);
+
+        open(my $in, "authsrv-decrypt $owner $user $instance|");
+        chomp(my $inpw = <$in>);
+        close($in);
+        
+        if ( $inpw ne $pw )
+        {
+            print "Failed self test with: $pw\n";
+        }
+    }
+
+    system("authsrv-delete", $owner, $user, $instance);
 }
