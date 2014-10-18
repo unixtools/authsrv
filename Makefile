@@ -1,3 +1,5 @@
+VERSION=3.0
+
 all:
 	if test -f /bin/make.exe; then \
 		cd windows && $(MAKE); \
@@ -13,8 +15,9 @@ clean:
 	fi
 
 dist: clean
-	cp -pr ../src ../authsrv
-	find ../authsrv -depth -name .svn -exec rm -rf {} \;
-	rm -f ../binaries/authsrv.tar.gz
-	cd .. && gtar -czvf binaries/authsrv.tar.gz authsrv
-	rm -rf ../authsrv
+	rm -rf ../authsrv-$(VERSION)
+	mkdir ../authsrv-$(VERSION)
+	cp -pr . ../authsrv-$(VERSION)
+	rm -f ../authsrv-$(VERSION)/*.gz
+	gtar -C.. -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
+	rm -rf ../authsrv-$(VERSION)
