@@ -3,7 +3,7 @@ Summary: AuthSrv Tool
 Name: authsrv
 Version: 3.0
 Release: 1
-License: Distributable
+License: Perl Artistic License
 Group: System Environment/Base
 AutoReqProv: no
 
@@ -19,12 +19,12 @@ This contains the authsrv utility.
 %setup -c -q -n authsrv
 
 %build
-cd authsrv
+cd authsrv-%{version}
 make DATADIR=%{_datadir}/authsrv BINDIR=%{_bindir}
 
 %install
 %{__rm} -rf %{buildroot}
-cd authsrv/unix
+cd authsrv-%{version}/unix
 make DATADIR=%{buildroot}%{_datadir}/authsrv BINDIR=%{buildroot}%{_bindir} install
 umask 077
 mkdir -p %{buildroot}%{_datadir}/authsrv/keys
