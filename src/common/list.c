@@ -9,7 +9,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "authsrv.h"
-#include "blowfish.h"
 #include "subs.h"
 
 #ifdef WINDOWS

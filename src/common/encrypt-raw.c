@@ -9,8 +9,8 @@
 #endif
 #include <fcntl.h>
 #include <errno.h>
+#include <openssl/blowfish.h>
 #include "authsrv.h"
-#include "blowfish.h"
 #include "subs.h"
 
 int main(int argc, char *argv[])

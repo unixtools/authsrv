@@ -5,8 +5,8 @@
 #ifndef WINDOWS
 #include <pwd.h>
 #endif
+#include <openssl/blowfish.h>
 #include "authsrv.h"
-#include "blowfish.h"
 #include "subs.h"
 
 int main(int argc, char *argv[])

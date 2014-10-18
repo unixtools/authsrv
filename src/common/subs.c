@@ -9,8 +9,8 @@
 #ifndef WINDOWS
 #include <syslog.h>
 #endif
+#include <openssl/blowfish.h>
 #include "authsrv.h"
-#include "blowfish.h"
 #include "subs.h"
 
 #define CheckNull(x) ((x)?(x):("Null"))
