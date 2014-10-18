@@ -45,7 +45,7 @@ badrange:
     IntFmt $0 "%c" $0
     StrCpy $2 "$2$0"
     StrLen $0 $2
-    IntCmpU $0 40 "" badrange
+    IntCmpU $0 64 "" badrange
 
 IfFileExists C:\authsrv\host-key +4 0
   fileOpen $0 "C:\authsrv\host-key" w
