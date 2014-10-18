@@ -14,9 +14,6 @@ build:
 	$(MAKE) all
 	$(MAKE) install
 
-$(BFLIB):
-	cd ../blowfish && $(MAKE)
-
 authsrv-auth: auth.o subs.o
 	$(CC) -o authsrv-auth auth.o subs.o $(LIBS) `krb5-config --libs`
 
@@ -91,5 +88,4 @@ $(DATADIR)/host-key:
 clean:
 	rm -f *.a *.o 
 	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-raw-encrypt authsrv-raw-decrypt
-	cd ../blowfish && $(MAKE) clean
 
