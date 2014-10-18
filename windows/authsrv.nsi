@@ -1,6 +1,6 @@
 # define installer name
 name "AuthSrv"
-outFile "authsrv-3.0.exe"
+outFile "authsrv-3.0.1.exe"
 
 # set desktop as install directory
 installDir $WINDIR
