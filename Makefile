@@ -18,6 +18,6 @@ dist: clean
 	rm -rf ../authsrv-$(VERSION)
 	mkdir ../authsrv-$(VERSION)
 	cp -pr . ../authsrv-$(VERSION)
-	rm -f ../authsrv-$(VERSION)/*.gz
-	gtar -C.. -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
+	rm -rf ../authsrv-$(VERSION)/*.gz ../authsrv-$(VERSION)/.git ../authsrv-$(VERSION)/.gitignore
+	tar -C.. -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
 	rm -rf ../authsrv-$(VERSION)
