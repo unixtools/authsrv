@@ -48,7 +48,7 @@ while ( chomp( my $line = <CMDIN> ) ) {
     else {
         open( FETCH, "authsrv-decrypt-raw $owner $user $instance|" );
     }
-	$pw = join("", <FETCH>);
+    my $pw = join( "", <FETCH> );
     close(FETCH);
 
     my $encpw = encode_base64( $pw, "" );
