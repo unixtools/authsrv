@@ -14,6 +14,8 @@ setOutPath $INSTDIR
 # specify file to go in output path
 file authsrv-decrypt.exe
 file authsrv-encrypt.exe
+file authsrv-raw-decrypt.exe
+file authsrv-raw-encrypt.exe
 file authsrv-list.exe
 file authsrv-delete.exe
 file ..\scripts\authsrv.pl
@@ -63,6 +65,8 @@ delete $INSTDIR\uninstall-authsrv.exe
 # now delete installed file
 delete $INSTDIR\authsrv-decrypt.exe
 delete $INSTDIR\authsrv-encrypt.exe
+delete $INSTDIR\authsrv-raw-decrypt.exe
+delete $INSTDIR\authsrv-raw-encrypt.exe
 delete $INSTDIR\authsrv-list.exe
 delete $INSTDIR\authsrv-delete.exe
 delete ..\scripts\authsrv.pl
