@@ -69,25 +69,20 @@ sub handle_list {
 
     if ( $STASHCOUNT == 0 ) {
         print "\n";
-        print
-          "There are currently no passwords stashed that you have access to.\n";
+        print "There are currently no passwords stashed that you have access to.\n";
         return;
     }
 
     print "\n";
     print "Currently Stashed Passwords ($STASHCOUNT):\n";
-    print
-      "--------------------------------------------------------------------\n";
+    print "--------------------------------------------------------------------\n";
     print "Owner    User     Instance           Modification Time\n";
-    print
-      "--------------------------------------------------------------------\n";
+    print "--------------------------------------------------------------------\n";
     my $last_ou;
     foreach my $owner ( sort( keys(%STASHED) ) ) {
 
         foreach my $user ( sort( keys( %{ $STASHED{$owner} } ) ) ) {
-            foreach
-              my $instance ( sort( keys( %{ $STASHED{$owner}->{$user} } ) ) )
-            {
+            foreach my $instance ( sort( keys( %{ $STASHED{$owner}->{$user} } ) ) ) {
                 my $ou = $owner . "\0" . $user;
                 if ( $ou ne $last_ou ) {
                     print "$owner\n";
@@ -98,8 +93,8 @@ sub handle_list {
                 print "          \\------ $instance    ";
                 print " " x ( 15 - length($instance) );
                 print
-                  scalar( localtime( $STASHED{$owner}->{$user}->{$instance} ) ),
-                  "\n";
+                    scalar( localtime( $STASHED{$owner}->{$user}->{$instance} ) ),
+                    "\n";
             }
         }
     }
@@ -123,7 +118,7 @@ sub handle_stash {
     print "\n";
     if ( $^O !~ /win/i ) {
         open( CMD, "|-" )
-          || exec( "authsrv-encrypt", $owner, $user, $instance );
+            || exec( "authsrv-encrypt", $owner, $user, $instance );
     }
     else {
         open( CMD, "|authsrv-encrypt $owner $user $instance" );
@@ -167,9 +162,7 @@ sub handle_delete {
         foreach my $fuser ( sort( keys( %{ $STASHED{$fowner} } ) ) ) {
             next if ( $user ne $fuser && $user ne "*" );
 
-            foreach
-              my $finstance ( sort( keys( %{ $STASHED{$fowner}->{$fuser} } ) ) )
-            {
+            foreach my $finstance ( sort( keys( %{ $STASHED{$fowner}->{$fuser} } ) ) ) {
                 next if ( $instance ne $finstance && $instance ne "*" );
 
                 print "Delete $fowner / $fuser / $finstance (Y/N)? ";
@@ -222,9 +215,7 @@ sub handle_print {
         foreach my $fuser ( sort( keys( %{ $STASHED{$fowner} } ) ) ) {
             next if ( $user ne $fuser && $user ne "*" );
 
-            foreach
-              my $finstance ( sort( keys( %{ $STASHED{$fowner}->{$fuser} } ) ) )
-            {
+            foreach my $finstance ( sort( keys( %{ $STASHED{$fowner}->{$fuser} } ) ) ) {
                 next if ( $instance ne $finstance && $instance ne "*" );
 
                 print "$fowner / $fuser / $finstance:\n";
@@ -317,25 +308,23 @@ sub handle_self_test {
     else {
         $owner = ( getpwuid($<) )[0];
     }
-    my $user = "_SELF_TEST_";
+    my $user     = "_SELF_TEST_";
     my $instance = "_SELF_TEST_";
 
-    foreach my $len ( 1 .. 120 )
-    {
+    foreach my $len ( 1 .. 120 ) {
         my $pw = "x" x $len;
-        open(my $out, "|authsrv-encrypt $owner $user $instance");
+        open( my $out, "|authsrv-encrypt $owner $user $instance" );
         print $out $pw, "\n";
         close($out);
 
-        open(my $in, "authsrv-decrypt $owner $user $instance|");
-        chomp(my $inpw = <$in>);
+        open( my $in, "authsrv-decrypt $owner $user $instance|" );
+        chomp( my $inpw = <$in> );
         close($in);
-        
-        if ( $inpw ne $pw )
-        {
+
+        if ( $inpw ne $pw ) {
             print "Failed self test with: $pw\n";
         }
     }
 
-    system("authsrv-delete", $owner, $user, $instance);
+    system( "authsrv-delete", $owner, $user, $instance );
 }
