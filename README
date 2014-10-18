@@ -16,10 +16,18 @@ Security: Access to host-key file is necessary to decrypt
 
 *** NOTICE *** Implementation for windows is barebones/minimal and effectively has
 no security at this time. This implementation is purely for convenience of keeping the
-code the same on unix and windows, and to keep passwords out of script source files.
+code the same on unix and windows, and to keep passwords out of script source files. 
+Contributions of a more appropriate implementation on windows that leverages filesystem
+security or secure credential store would be ideal, but need to maintain the same calling
+conventions.
 
+External Dependencies:
+----------------------
+Links against openssl libssl and libcrypto to obtain blowfish library.
 
-Please see blowfish/COPYRIGHT for license information for the included blowfish library.
+License:
+--------
+Perl Artistic License
 
 
 Windows Builds:
@@ -37,15 +45,17 @@ Install Mingw from sourceforge (0.6.2-beta-20131004-1)
 	mingw-get install msys-libopenssl	
 	mingw-get install msys-vim
 	ln -s /include/* /mingw/include/*
+	ln -s /bin/vim.exe /bin/vi.exe
 
 Check out and build authsrv
 	cd /work
 	git clone https://github.com/unixtools/authsrv
-	cd authsrv/src
+	cd authsrv
 	make
 
 Build the installer
 	Browse to C:/work in windows UI
-	Right click on the NSI file in authsrv/src/windows/authsrv.nsi and choose to compile
+	Right click on the NSI file in authsrv/windows/authsrv.nsi and choose to compile
+	or run the 'makeinstaller.bat' file
 	
 
