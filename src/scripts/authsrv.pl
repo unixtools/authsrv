@@ -311,7 +311,11 @@ sub handle_self_test {
     my $user     = "_SELF_TEST_";
     my $instance = "_SELF_TEST_";
 
+    my $cnt = 0;
+    my $ok  = 1;
     foreach my $len ( 1 .. 120 ) {
+        $cnt++;
+
         my $pw = "x" x $len;
         open( my $out, "|authsrv-encrypt $owner $user $instance" );
         print $out $pw, "\n";
@@ -322,8 +326,15 @@ sub handle_self_test {
         close($in);
 
         if ( $inpw ne $pw ) {
-            print "Failed self test with: $pw\n";
+            print "Failed self test after $cnt tests.\n";
+            print "   Input: $pw\n";
+            print "  Result: $inpw\n";
+            $ok = 0;
+            last;
         }
+    }
+    if ($ok) {
+        print "Passed self test with $cnt tests.\n";
     }
 
     system( "authsrv-delete", $owner, $user, $instance );
