@@ -1,7 +1,7 @@
 # define installer name
 name "AuthSrv"
 outFile "install-authsrv.exe"
- 
+
 # set desktop as install directory
 installDir $WINDIR
  
@@ -32,11 +32,24 @@ IfFileExists C:\authsrv\*.* +3 0
 IfFileExists C:\authsrv\keys\*.* +2 0
   CreateDirectory C:\authsrv\keys
 
-/* create a dummy host key, really need to use md5 plugin or something
- * appropriate, but since no security anyway, does it really matter? */
+  System::Call 'ole32:CoCreateGuid(g .s)'
+  Pop $1
+  DetailPrint $1
+
+StrCpy $2 ""
+badrange:
+    System::Call 'advapi32::SystemFunction036(*i0r0,i1)'
+    IntCmpU $0 127 "" ""  badrange ; Limit to ASCII, IsCharAlphaNumeric is locale specific
+    System::Call 'user32::IsCharAlphaNumericA(ir0)i.r1'
+    StrCmp $1 0 badrange
+    IntFmt $0 "%c" $0
+    StrCpy $2 "$2$0"
+    StrLen $0 $2
+    IntCmpU $0 40 "" badrange
+
 IfFileExists C:\authsrv\host-key +4 0
   fileOpen $0 "C:\authsrv\host-key" w
-  fileWrite $0 "dummy-host-key-lkhasd23976235blygi86234jksgdf"
+  fileWrite $0 $2
   fileClose $0
 
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
