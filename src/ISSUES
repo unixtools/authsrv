@@ -1,0 +1,10 @@
+Something is broken with the way it's doing the IO of reading keys 
+and encryption. Some content is causing gibberish on windows and the
+symptom/behavior seems to vary depending on the host key content.
+
+Need to rewrite this, but need to come up with a safe way to do it
+that doesn't risk loss of credentials on the box.
+
+Not entirely sure what the underlying issue is though as I only 
+see it on windows and it seems to go away when I create a better
+host key.
