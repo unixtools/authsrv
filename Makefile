@@ -15,9 +15,9 @@ clean:
 	fi
 
 dist: clean
-	rm -rf ../authsrv-$(VERSION)
-	mkdir ../authsrv-$(VERSION)
-	cp -pr . ../authsrv-$(VERSION)
-	rm -rf ../authsrv-$(VERSION)/*.gz ../authsrv-$(VERSION)/.git ../authsrv-$(VERSION)/.gitignore
-	tar -C.. -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
-	rm -rf ../authsrv-$(VERSION)
+	rm -rf /tmp/authsrv-$(VERSION)
+	mkdir /tmp/authsrv-$(VERSION)
+	cp -pr . /tmp/authsrv-$(VERSION)
+	cd /tmp/authsrv-$(VERSION) && rm -rf *.gz .git .gitignore
+	tar -C/tmp -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
+	rm -rf /tmp/authsrv-$(VERSION)
