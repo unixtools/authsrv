@@ -329,7 +329,7 @@ sub handle_self_test {
         if ( $inpw ne $pw ) {
             print "Failed self test after $cnt tests.\n";
             print "   Input: '$pw' length(", length($pw), ")\n";
-            print "  Result: '$inpw' length(", length($pw), ")\n";
+            print "  Result: '$inpw' length(", length($inpw), ")\n";
             $ok = 0;
             last;
         }
