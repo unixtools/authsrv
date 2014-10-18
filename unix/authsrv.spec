@@ -9,7 +9,7 @@ AutoReqProv: no
 
 Packager: Nathan Neulinger <nneul@neulinger.org>
 
-Source: authsrv-${version}.tar.gz
+Source: authsrv-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
