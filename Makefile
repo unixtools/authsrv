@@ -1,8 +1,20 @@
 all:
-	cd src && $(MAKE)
+	if test -f /bin/make.exe; then \
+		cd windows && $(MAKE); \
+	else \
+		cd unix && $(MAKE); \
+	fi
 
 clean:
-	cd src && $(MAKE) clean
+	if test -f /bin/make.exe; then \
+		cd windows && $(MAKE) clean; \
+	else \
+		cd unix && $(MAKE) clean; \
+	fi
 
 dist: clean
-	cd src && $(MAKE) dist
+	cp -pr ../src ../authsrv
+	find ../authsrv -depth -name .svn -exec rm -rf {} \;
+	rm -f ../binaries/authsrv.tar.gz
+	cd .. && gtar -czvf binaries/authsrv.tar.gz authsrv
+	rm -rf ../authsrv
