@@ -59,3 +59,7 @@ Build the installer
 	or run the 'makeinstaller.bat' file
 	
 
+
+Devel Notes:
+------------
+Version Number is embedded in top level Makefile, authsrv.spec and windows/authsrv.nsi
