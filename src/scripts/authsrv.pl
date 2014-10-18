@@ -322,13 +322,14 @@ sub handle_self_test {
         close($out);
 
         open( my $in, "authsrv-decrypt $owner $user $instance|" );
-        chomp( my $inpw = <$in> );
+        my $inpw = <$in>;
+	$inpw =~ s/[\r\n]+$//sgmo;
         close($in);
 
         if ( $inpw ne $pw ) {
             print "Failed self test after $cnt tests.\n";
-            print "   Input: $pw\n";
-            print "  Result: $inpw\n";
+            print "   Input: '$pw' length(", length($pw), ")\n";
+            print "  Result: '$inpw' length(", length($pw), ")\n";
             $ok = 0;
             last;
         }
