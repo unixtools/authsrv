@@ -2,8 +2,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <pwd.h>
+#include <openssl/blowfish.h>
 #include "authsrv.h"
-#include "blowfish.h"
 #include "subs.h"
 #include <syslog.h>
 #include <krb5.h>
