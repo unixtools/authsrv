@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 #ifndef WINDOWS
 	struct passwd *userpw;
 #endif
-	struct DataBlock *encrypted, *decrypted;
+	struct DataBlock *encrypted, *decrypted, *hk;
 
 	if ( argc != 3 && argc != 4 )
 	{
@@ -83,9 +83,16 @@ int main(int argc, char *argv[])
         owner, user, instance);
 
 	encrypted = FileToDataBlock(filename);
-	decrypted = wrap_blowfish(FetchHostKey(),encrypted,BF_DECRYPT);
+
+	hk = FetchHostKey();
+	decrypted = wrap_blowfish(hk,encrypted,BF_DECRYPT);
+	FreeDataBlock(hk);
+
     /* no trailing newline */
 	printf("%s", decrypted->data);
+
+	FreeDataBlock(encrypted);
+	FreeDataBlock(decrypted);
 	exit(0);
 }
 

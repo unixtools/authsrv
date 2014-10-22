@@ -9,6 +9,8 @@ char *string_to_hex(char *src);
 struct DataBlock *wrap_blowfish(struct DataBlock *key, struct DataBlock *data, int action);
 struct DataBlock *FileToDataBlock(char *filename);
 void DataBlockToFile(char *filename, struct DataBlock *data);
+struct DataBlock *AllocDataBlock();
+void FreeDataBlock(struct DataBlock *data);
 
 void Log(char *action, char *owner, char *user, char *instance);
 

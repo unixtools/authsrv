@@ -149,7 +149,7 @@ struct DataBlock *wrap_blowfish(struct DataBlock *key, struct DataBlock *inblock
 	}
 
 	/* Allocate mem */
-	outblock = (struct DataBlock *) malloc(sizeof(struct DataBlock));
+	outblock = AllocDataBlock();
 	tmpdata = (unsigned char *) malloc(len);
 	outdata = (unsigned char *) malloc(len);
 
@@ -171,9 +171,21 @@ struct DataBlock *wrap_blowfish(struct DataBlock *key, struct DataBlock *inblock
 
 	/* Return result */
 	free(tmpdata);
+	
+	/* do not free outdata - it's passed back in the block */
+
 	return outblock;
 }
 
+struct DataBlock *AllocDataBlock()
+{
+	struct DataBlock *tmp;
+
+	tmp = (struct DataBlock *) malloc(sizeof(struct DataBlock));
+	tmp->length = 0;
+	tmp->data = 0;
+	return tmp;
+}
 
 struct DataBlock *FileToDataBlock(char *filename)
 {
@@ -181,7 +193,7 @@ struct DataBlock *FileToDataBlock(char *filename)
 	unsigned char tmpdata[MAX_DATA_LEN];
 	FILE *file;
 
-	datablock = (struct DataBlock *) malloc(sizeof(struct DataBlock));
+	datablock = AllocDataBlock();
 
 	if ( (file=fopen(filename, "r")) == NULL )
 	{
@@ -190,7 +202,7 @@ struct DataBlock *FileToDataBlock(char *filename)
 	}
 
 	datablock->length = fread(tmpdata, sizeof(char), MAX_DATA_LEN, file);
-	datablock->data = (unsigned char *) malloc(datablock->length);
+	datablock->data = (unsigned char *) malloc(datablock->length+1);
 	memcpy(datablock->data, tmpdata, datablock->length);
 	fclose(file);
 	return datablock;
@@ -216,10 +228,16 @@ struct DataBlock *FetchHostKey(void)
 	struct DataBlock *key = NULL;
 
 	key = FileToDataBlock(DATADIR DIRSEP "host-key");
-	if ( key->data[key->length] == '\n' )
-	{
-		key->data[key->length] = '\0';
-	}
-
 	return key;
+}
+
+void FreeDataBlock(struct DataBlock *datablock)
+{
+	if ( datablock ) {
+		if ( datablock->data )
+		{
+			free(datablock->data);
+		}
+		free(datablock);
+	}
 }

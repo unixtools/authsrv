@@ -3,7 +3,7 @@ DATADIR=/usr/share/authsrv
 
 LIBS = -lssl -lcrypto
 INC = -I../common
-CC = gcc -g -O2 -Wall -DDATADIR=\"$(DATADIR)\"
+CC = gcc -g -Wall -DDATADIR=\"$(DATADIR)\"
 
 INSTALL = install -c
 

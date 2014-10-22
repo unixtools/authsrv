@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 {
 	char *owner, *user, *instance;
 	char filename[400];
-	struct DataBlock data;
+	struct DataBlock *data, *encrypted, *hk;
 #ifndef WINDOWS
 	struct passwd *userpw;
 #endif
@@ -103,8 +103,9 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	
-	data.data = (unsigned char *) passwd;
-	data.length = strlen(passwd)+1;
+	data = AllocDataBlock();
+	data->data = (unsigned char *) passwd;
+	data->length = strlen(passwd)+1;
 
 #ifndef WINDOWS
 #define MKDIR(x,y) mkdir(x,y)
@@ -133,7 +134,17 @@ int main(int argc, char *argv[])
         owner, user, instance);
 
 	Log("encrypt", owner, user, instance);
-	DataBlockToFile(filename, wrap_blowfish(FetchHostKey(),&data,BF_ENCRYPT));
+	hk = FetchHostKey();
+		
+	encrypted = wrap_blowfish(hk,data,BF_ENCRYPT);
+	FreeDataBlock(hk);
+
+	DataBlockToFile(filename, encrypted);
+	FreeDataBlock(encrypted);
+
+	data->data = 0;
+	FreeDataBlock(data);
+
 	exit(0);
 }
 

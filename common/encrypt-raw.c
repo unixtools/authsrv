@@ -17,13 +17,13 @@ int main(int argc, char *argv[])
 {
 	char *owner, *user, *instance;
 	char filename[400];
-	struct DataBlock data;
+	struct DataBlock *data, *encrypted, *hk;
 #ifndef WINDOWS
 	struct passwd *userpw;
 #endif
     int curlen = 0;
-	char buf[MAX_DATA_LEN];
-	char passwd[MAX_DATA_LEN];
+	char buf[MAX_DATA_LEN] = "";
+	char passwd[MAX_DATA_LEN] = "";
 	int i;
 
 	umask(077);
@@ -88,11 +88,27 @@ int main(int argc, char *argv[])
 
     buf[0] = 0;
     curlen = 0;
-    while ( curlen < (MAX_DATA_LEN-1000) && (i = read(fileno(stdin), buf, 1000)) > 0 )
+	passwd[0] = 0;
+
+    while ( curlen < (MAX_DATA_LEN-1000) )
     {
-        memcpy(&passwd[curlen], buf, i);
-        curlen += i;
+		i = read(fileno(stdin), buf, 1000);
+		if ( i > 0 )
+		{
+        	memcpy(passwd + curlen, buf, i);
+        	curlen += i;
+		}
+		else
+		{
+			break;
+		}
     }
+
+	if ( curlen == 0 )
+	{
+		fprintf(stderr, "error on password: must be specified\n");
+		exit(1);
+	}
         
 	if ( check_content(passwd) )
 	{
@@ -100,8 +116,9 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	
-	data.data = (unsigned char *) passwd;
-	data.length = strlen(passwd)+1;
+	data = AllocDataBlock();
+	data->data = (unsigned char *) passwd;
+	data->length = strlen(passwd)+1;
 
 #ifndef WINDOWS
 #define MKDIR(x,y) mkdir(x,y)
@@ -130,7 +147,17 @@ int main(int argc, char *argv[])
         owner, user, instance);
 
 	Log("encrypt", owner, user, instance);
-	DataBlockToFile(filename, wrap_blowfish(FetchHostKey(),&data,BF_ENCRYPT));
+	hk = FetchHostKey();
+
+	encrypted = wrap_blowfish(hk,data,BF_ENCRYPT);
+	FreeDataBlock(hk);
+
+	DataBlockToFile(filename, encrypted);
+	FreeDataBlock(encrypted);
+
+	data->data = 0;
+	FreeDataBlock(data);
+
 	exit(0);
 }
 
