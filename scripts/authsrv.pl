@@ -311,27 +311,36 @@ sub handle_self_test {
     my $user     = "_SELF_TEST_";
     my $instance = "_SELF_TEST_";
 
+    print "Enter test parameters:\n";
+    my $min  = &prompt("Min Length") || return;
+    my $max  = &prompt("Max Length") || return;
+    my $iter = &prompt("Iterations") || return;
+
     my $cnt = 0;
     my $ok  = 1;
-    foreach my $len ( 1 .. 120 ) {
-        $cnt++;
+    foreach my $pass ( 1 .. $iter ) {
+        foreach my $tool ( "", "-raw" ) {
+            foreach my $len ( $min .. $max ) {
+                $cnt++;
 
-        my $pw = "x" x $len;
-        open( my $out, "|authsrv-encrypt $owner $user $instance" );
-        print $out $pw, "\n";
-        close($out);
+                my $pw = "x" x $len;
+                open( my $out, "|authsrv${tool}-encrypt $owner $user $instance" );
+                print $out $pw, "\n";
+                close($out);
 
-        open( my $in, "authsrv-decrypt $owner $user $instance|" );
-        my $inpw = <$in>;
-	$inpw =~ s/[\r\n]+$//sgmo;
-        close($in);
+                open( my $in, "authsrv${tool}-decrypt $owner $user $instance|" );
+                my $inpw = <$in>;
+                $inpw =~ s/[\r\n]+$//sgmo;
+                close($in);
 
-        if ( $inpw ne $pw ) {
-            print "Failed self test after $cnt tests.\n";
-            print "   Input: '$pw' length(", length($pw), ")\n";
-            print "  Result: '$inpw' length(", length($inpw), ")\n";
-            $ok = 0;
-            last;
+                if ( $inpw ne $pw ) {
+                    print "Failed self test after $cnt tests with authsrv${tool}-encrypt/decrypt.\n";
+                    print "   Input: '$pw' length(",   length($pw),   ")\n";
+                    print "  Result: '$inpw' length(", length($inpw), ")\n";
+                    $ok = 0;
+                    last;
+                }
+            }
         }
     }
     if ($ok) {
