@@ -7,15 +7,12 @@ CC = gcc -g -Wall -DDATADIR=\"$(DATADIR)\"
 
 INSTALL = install -c
 
-all: authsrv-auth authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-raw-encrypt authsrv-raw-decrypt
+all: authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-raw-encrypt authsrv-raw-decrypt
 
 build: 
 	$(MAKE) clean
 	$(MAKE) all
 	$(MAKE) install
-
-authsrv-auth: auth.o subs.o
-	$(CC) -o authsrv-auth auth.o subs.o $(LIBS) `krb5-config --libs`
 
 auth.o: ../common/auth.c
 	$(CC) $(INC) `krb5-config --cflags` -c -o auth.o ../common/auth.c
@@ -67,7 +64,6 @@ install: dirs authsrv-encrypt authsrv-decrypt authsrv-raw-encrypt authsrv-raw-de
 	$(INSTALL) -m 4755 -o root -g root authsrv-raw-decrypt $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-delete $(BINDIR)
 	$(INSTALL) -m 4755 -o root -g root authsrv-list $(BINDIR)
-	$(INSTALL) -m 4755 -o root -g root authsrv-auth $(BINDIR)
 	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv-dump.pl $(BINDIR)/authsrv-dump
 	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv-load.pl $(BINDIR)/authsrv-load
 	$(INSTALL) -m 755 -o root -g root ../scripts/authsrv.pl $(BINDIR)/authsrv
@@ -87,5 +83,5 @@ $(DATADIR)/host-key:
 
 clean:
 	rm -f *.a *.o 
-	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-auth authsrv-raw-encrypt authsrv-raw-decrypt
+	rm -f authsrv-encrypt authsrv-decrypt authsrv-delete authsrv-list authsrv-raw-encrypt authsrv-raw-decrypt
 

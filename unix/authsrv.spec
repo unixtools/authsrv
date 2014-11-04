@@ -1,7 +1,7 @@
 
 Summary: AuthSrv Tool
 Name: authsrv
-Version: 3.0.1
+Version: 3.1.0
 Release: 1%{?dist}
 License: Perl Artistic License
 Group: System Environment/Base
@@ -50,7 +50,6 @@ chmod -R go-rwx %{_datadir}/authsrv
 %attr(0755, root, root) %{_bindir}/authsrv-dump
 %attr(0755, root, root) %{_bindir}/authsrv-load
 
-%attr(4755, root, root) %{_bindir}/authsrv-auth
 %attr(4755, root, root) %{_bindir}/authsrv-decrypt
 %attr(4755, root, root) %{_bindir}/authsrv-raw-decrypt
 %attr(4755, root, root) %{_bindir}/authsrv-delete
