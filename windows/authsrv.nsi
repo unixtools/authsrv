@@ -1,6 +1,6 @@
 # define installer name
 name "AuthSrv"
-outFile "authsrv-3.0.1.exe"
+outFile "authsrv-3.1.0.exe"
 
 # set desktop as install directory
 installDir $WINDIR
@@ -82,12 +82,12 @@ delete $INSTDIR\authsrv-raw-decrypt.exe
 delete $INSTDIR\authsrv-raw-encrypt.exe
 delete $INSTDIR\authsrv-list.exe
 delete $INSTDIR\authsrv-delete.exe
-delete ..\scripts\authsrv.pl
-delete ..\scripts\authsrv-dump.pl
-delete ..\scripts\authsrv-load.pl
-delete authsrv.bat
-delete authsrv-dump.bat
-delete authsrv-load.bat
+delete $INSTDIR\authsrv.pl
+delete $INSTDIR\authsrv-dump.pl
+delete $INSTDIR\authsrv-load.pl
+delete $INSTDIR\authsrv.bat
+delete $INSTDIR\authsrv-dump.bat
+delete $INSTDIR\authsrv-load.bat
 
 # Not deleting the host-key and/or password stashes intentionally, though that would be good to consider later
 
