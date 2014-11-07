@@ -1,1 +1,5 @@
-v3.1.0: Removed authsrv-auth kerberos integration, fixed windows uninstaller
+v3.1.0: 
+	Removed authsrv-auth kerberos integration
+	Fixed windows uninstaller. 
+	Fixed incorrect content in authsrv-load.
+	Load JSON module at runtime so it's not mandatory.
