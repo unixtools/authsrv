@@ -131,7 +131,7 @@ foreach my $entry (@entries) {
     else {
         open( $enc, "|-" ) || exec( "authsrv-raw-encrypt", $owner, $user, $instance );
     }
-    print $enc $password, "\n";
+    print $enc $password;
     close($enc);
 
     $cnt++;
