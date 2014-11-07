@@ -15,7 +15,6 @@ no warnings qw(taint);
 
 use MIME::Base64;
 use Getopt::Long;
-use JSON;
 use strict;
 
 my $json;
@@ -80,6 +79,8 @@ if ( !$json ) {
     print "</authsrv>\n";
 }
 elsif ($json) {
+    eval "use JSON";
+
     my $j = new JSON;
 
     $j->canonical(1);
