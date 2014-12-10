@@ -36,15 +36,18 @@ Install nullsoft installer 2.46
 Install Mingw from sourceforge (0.6.2-beta-20131004-1)
 	Choose mingw-developer-toolkit, mingw32-base, msys-base
 	Create a C:\work directory
-	Create C:\mingw\msys\1.0\etc\fstab containing
+	Create C:\mingw\msys\1.0\etc\fstab file containing
 		C:\mingw /mingw
 		C:\work /work
 	Create shortcut on desktop to run:
 		C:\mingw\msys\1.0\msys.bat
+		Start In: C:\mingw\msys\1.0
 	Launch that shortcut to bring up shell
 	mingw-get install msys-libopenssl	
 	mingw-get install msys-vim
-	ln -s /include/* /mingw/include/*
+	# Need to get openssl libs into include paths searched by mingw defaults
+	ln -s /include/* /mingw/include/
+	# Alias for 'vi filename' usage
 	ln -s /bin/vim.exe /bin/vi.exe
 
 Check out and build authsrv
