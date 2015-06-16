@@ -1,0 +1,10 @@
+/usr/bin/authsrv
+/usr/bin/authsrv-dump
+/usr/bin/authsrv-load
+/usr/bin/authsrv-decrypt
+/usr/bin/authsrv-raw-decrypt
+/usr/bin/authsrv-delete
+/usr/bin/authsrv-encrypt
+/usr/bin/authsrv-raw-encrypt
+/usr/bin/authsrv-list
+/usr/share/authsrv

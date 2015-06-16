@@ -1,0 +1,12 @@
+Priority: optional
+Maintainer: Nathan Neulinger <nneul@neulinger.org>
+Source: authsrv
+Build-Depends: debhelper (>= 8), libssl-dev
+Standards-Version: 3.9.1
+Homepage: 
+
+Package: authsrv
+Section: utils
+Architecture: any
+Description: This contains the authsrv utility.
+

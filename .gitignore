@@ -9,3 +9,4 @@ unix/*.o
 windows/*.exe
 windows/*.o
 *.tar.gz
+debian/authsrv.debhelper.log

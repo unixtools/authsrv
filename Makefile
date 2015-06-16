@@ -21,3 +21,8 @@ dist: clean
 	cd /tmp/authsrv-$(VERSION) && rm -rf *.gz .git .gitignore
 	tar -C/tmp -czvf authsrv-$(VERSION).tar.gz authsrv-$(VERSION)
 	rm -rf /tmp/authsrv-$(VERSION)
+
+deb: dist
+	cp authsrv-$(VERSION).tar.gz ../authsrv_$(VERSION).orig.tar.gz
+	dpkg-buildpackage -b
+	rm -f ../authsrv_$(VERSION).orig.tar.gz

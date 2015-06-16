@@ -1,0 +1,13 @@
+#! /bin/sh
+if   [ "configure" = "$1" && "." = ".$2" ]; then  shift ; set -- "1" "$@"
+elif [ "configure" = "$1" && "." != ".$2" ]; then shift ; set -- "2" "$@"
+fi
+
+umask 077
+if [ ! -e /usr/share/authsrv/host-key ]; then
+	head -64c /dev/urandom > /usr/share/authsrv/host-key
+fi
+# fix any previous permissions issues
+chmod 400 /usr/share/authsrv/host-key
+chown -R root:root /usr/share/authsrv
+chmod -R go-rwx /usr/share/authsrv
