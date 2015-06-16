@@ -7,12 +7,20 @@ all:
 		cd unix && $(MAKE); \
 	fi
 
+install:
+	if test -f /bin/make.exe; then \
+		cd windows && $(MAKE) install; \
+	else \
+		cd unix && $(MAKE) install; \
+	fi
+
 clean:
 	if test -f /bin/make.exe; then \
 		cd windows && $(MAKE) clean; \
 	else \
 		cd unix && $(MAKE) clean; \
 	fi
+	rm -rf debian/authsrv debian/tmp debian/authsrv.substvars debian/files
 
 dist: clean
 	rm -rf /tmp/authsrv-$(VERSION)

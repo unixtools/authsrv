@@ -11,3 +11,16 @@ fi
 chmod 400 /usr/share/authsrv/host-key
 chown -R root:root /usr/share/authsrv
 chmod -R go-rwx /usr/share/authsrv
+
+chmod 755 /usr/bin/authsrv
+chmod 755 /usr/bin/authsrv-dump
+chmod 755 /usr/bin/authsrv-load
+
+chmod 4755 /usr/bin/authsrv-decrypt
+chmod 4755 /usr/bin/authsrv-raw-decrypt
+chmod 4755 /usr/bin/authsrv-delete
+chmod 4755 /usr/bin/authsrv-encrypt
+chmod 4755 /usr/bin/authsrv-raw-encrypt
+chmod 4755 /usr/bin/authsrv-list
+
+chmod 0700 /usr/share/authsrv

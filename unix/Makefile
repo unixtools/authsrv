@@ -1,5 +1,5 @@
-BINDIR=/usr/bin
-DATADIR=/usr/share/authsrv
+BINDIR=$(DESTDIR)/usr/bin
+DATADIR=$(DESTDIR)/usr/share/authsrv
 
 LIBS = -lssl -lcrypto
 INC = -I../common

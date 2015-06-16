@@ -2,3 +2,6 @@
 
 %:
 	dh $@
+
+override_dh_auto_install:
+	$(MAKE) -C unix DESTDIR=$$(pwd)/debian/tmp prefix=/usr install

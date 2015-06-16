@@ -10,3 +10,7 @@ windows/*.exe
 windows/*.o
 *.tar.gz
 debian/authsrv.debhelper.log
+debian/authsrv.substvars
+debian/authsrv/
+debian/files
+debian/tmp/
