@@ -1,7 +1,8 @@
-#! /bin/bash
-if   [ "configure" = "$1" && "." = ".$2" ]; then  shift ; set -- "1" "$@"
-elif [ "configure" = "$1" && "." != ".$2" ]; then shift ; set -- "2" "$@"
-fi
+#! /bin/sh
+set -e
+
+case "$1" in
+	configure)
 
 umask 077
 if [ ! -e /usr/share/authsrv/host-key ]; then
@@ -24,3 +25,15 @@ chmod 4755 /usr/bin/authsrv-raw-encrypt
 chmod 4755 /usr/bin/authsrv-list
 
 chmod 0700 /usr/share/authsrv
+	;;
+
+	  abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0
