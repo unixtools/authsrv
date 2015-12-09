@@ -53,7 +53,7 @@ IfFileExists C:\authsrv\host-key +4 0
   fileClose $0
 
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
-                 "DisplayName" "AuthSrv -- password stashing facility"
+                 "DisplayName" "AuthSrv"
 
 WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\AuthSrv" \
                  "UninstallString" "$\"$INSTDIR\uninstall-authsrv.exe$\""
