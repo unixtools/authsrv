@@ -7,7 +7,6 @@
 #endif
 #endif
 
-
 #ifndef DATADIR
 #ifdef WINDOWS
 #define DATADIR "C:\\authsrv"
@@ -15,5 +14,3 @@
 #define DATADIR "/usr/share/authsrv"
 #endif
 #endif
-
-

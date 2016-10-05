@@ -20,12 +20,7 @@ void Log(char *action, char *owner, char *user, char *instance)
 #ifndef WINDOWS
 	openlog("authsrv", LOG_PID | LOG_NOWAIT, LOG_AUTHPRIV);
 	syslog(LOG_DEBUG, "Who(%d/%d) Action(%s) Owner(%s) User(%s) Instance(%s)",
-		getuid(), 
-		getgid(),
-		CheckNull(action), 
-		CheckNull(owner), 
-		CheckNull(user), 
-		CheckNull(instance));
+	       getuid(), getgid(), CheckNull(action), CheckNull(owner), CheckNull(user), CheckNull(instance));
 #endif
 }
 
@@ -33,74 +28,58 @@ char *check_element(char *str)
 {
 	int i;
 
-	if ( !str )
-	{
+	if (!str) {
 		return "must specify";
 	}
-        if ( strlen(str) > 40 )
-        {
+	if (strlen(str) > 40) {
 		return "too long";
-        }
-
-	for (i=0; i<strlen(str); i++)
-	{
-		char ch = str[i];
-
-                if ( (ch >= 'A' && ch <= 'Z') ||
-                        (ch >= 'a' && ch <= 'z') ||
-                        (ch >= '0' && ch <= '9') ||
-                        (ch == '@') ||
-                        (ch == '-') ||
-                        (ch == '_') ||
-                        (ch == '+') ||
-                        (ch == '=') ||
-                        (ch == '.') )
-                {
-                        /* ok */
-                }
-                else
-                {
-			return "invalid character in string";
-                }
 	}
 
+	for (i = 0; i < strlen(str); i++) {
+		char ch = str[i];
+
+		if ((ch >= 'A' && ch <= 'Z') ||
+		    (ch >= 'a' && ch <= 'z') ||
+		    (ch >= '0' && ch <= '9') ||
+		    (ch == '@') || (ch == '-') || (ch == '_') || (ch == '+') || (ch == '=') || (ch == '.')) {
+			/* ok */
+		} else {
+			return "invalid character in string";
+		}
+	}
 
 	return NULL;
 }
 
 char *check_content(char *str)
 {
-        if ( !str )
-        {
-                return "must specify";
-        }
-        if ( strlen(str) > MAX_DATA_LEN )
-        {
-                return "too long";
-        }
+	if (!str) {
+		return "must specify";
+	}
+	if (strlen(str) > MAX_DATA_LEN) {
+		return "too long";
+	}
 
-        return NULL;
+	return NULL;
 }
-
 
 char *string_to_hex(char *src)
 {
 	int i;
-	static char map[16] = 
-		{'0','1','2','3','4','5','6','7',
-		'8','9','A','B','C','D','E','F'};
+	static char map[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
 	char *res = NULL;
 	unsigned int tmp;
 
-	res = (char *) malloc( strlen(src)*2 + 1 );
+	res = (char *)malloc(strlen(src) * 2 + 1);
 
-	for ( i=0; i<strlen(src); i++ )
-	{
+	for (i = 0; i < strlen(src); i++) {
 		tmp = src[i];
-		res[2*i] = map[((tmp & 0xf0) >> 4)];
-		res[2*i+1] = map[(tmp & 0x0f)];
+		res[2 * i] = map[((tmp & 0xf0) >> 4)];
+		res[2 * i + 1] = map[(tmp & 0x0f)];
 	}
-	res[2*i]='\0';
+	res[2 * i] = '\0';
 
 	return res;
 }
@@ -108,50 +87,45 @@ char *string_to_hex(char *src)
 char *DataBlockToHex(struct DataBlock *src)
 {
 	int i;
-	static char map[16] = 
-		{'0','1','2','3','4','5','6','7',
-		'8','9','A','B','C','D','E','F'};
+	static char map[16] = { '0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
 	char *res = NULL;
 	unsigned int tmp;
 
-	res = (char *) malloc( src->length *2 + 1 );
-	for ( i=0; i<src->length; i++ )
-	{
+	res = (char *)malloc(src->length * 2 + 1);
+	for (i = 0; i < src->length; i++) {
 		tmp = src->data[i];
-		res[2*i] = map[((tmp & 0xf0) >> 4)];
-		res[2*i+1] = map[(tmp & 0x0f)];
+		res[2 * i] = map[((tmp & 0xf0) >> 4)];
+		res[2 * i + 1] = map[(tmp & 0x0f)];
 	}
-	res[2*i]='\0';
+	res[2 * i] = '\0';
 
 	return res;
 }
 
 struct DataBlock *wrap_blowfish(struct DataBlock *key, struct DataBlock *inblock, int action)
 {
-	BF_KEY bfkey;	
+	BF_KEY bfkey;
 	unsigned char *tmpdata, *outdata;
 	struct DataBlock *outblock;
 	int len, i;
 
-	if ( !inblock || !key || !inblock->data ) 
-	{
+	if (!inblock || !key || !inblock->data) {
 		return NULL;
 	}
 
 	/* Calculate length that will be 8byte multiples */
-	if ( inblock->length % 8 != 0 )
-	{
+	if (inblock->length % 8 != 0) {
 		len = inblock->length + 8 - (inblock->length % 8);
-	}
-	else
-	{
+	} else {
 		len = inblock->length;
 	}
 
 	/* Allocate mem */
 	outblock = AllocDataBlock();
-	tmpdata = (unsigned char *) malloc(len);
-	outdata = (unsigned char *) malloc(len);
+	tmpdata = (unsigned char *)malloc(len);
+	outdata = (unsigned char *)malloc(len);
 
 	/* Initialize mem */
 	outblock->data = outdata;
@@ -164,14 +138,13 @@ struct DataBlock *wrap_blowfish(struct DataBlock *key, struct DataBlock *inblock
 	BF_set_key(&bfkey, key->length, key->data);
 
 	/* Do encrypt/decrypt */
-	for (i=0; i<len; i+=8)
-	{
+	for (i = 0; i < len; i += 8) {
 		BF_ecb_encrypt(&tmpdata[i], &outdata[i], &bfkey, action);
 	}
 
 	/* Return result */
 	free(tmpdata);
-	
+
 	/* do not free outdata - it's passed back in the block */
 
 	return outblock;
@@ -181,7 +154,7 @@ struct DataBlock *AllocDataBlock()
 {
 	struct DataBlock *tmp;
 
-	tmp = (struct DataBlock *) malloc(sizeof(struct DataBlock));
+	tmp = (struct DataBlock *)malloc(sizeof(struct DataBlock));
 	tmp->length = 0;
 	tmp->data = 0;
 	return tmp;
@@ -195,28 +168,24 @@ struct DataBlock *FileToDataBlock(char *filename)
 
 	datablock = AllocDataBlock();
 
-	if ( (file=fopen(filename, "r")) == NULL )
-	{
-		OUTPUT_ERROR("Couldn't open file for reading:\n\t%s\n",filename);
+	if ((file = fopen(filename, "r")) == NULL) {
+		OUTPUT_ERROR("Couldn't open file for reading:\n\t%s\n", filename);
 		exit(1);
 	}
 
 	datablock->length = fread(tmpdata, sizeof(char), MAX_DATA_LEN, file);
-	datablock->data = (unsigned char *) malloc(datablock->length+1);
+	datablock->data = (unsigned char *)malloc(datablock->length + 1);
 	memcpy(datablock->data, tmpdata, datablock->length);
 	fclose(file);
 	return datablock;
 }
 
-
-
 void DataBlockToFile(char *filename, struct DataBlock *datablock)
 {
 	FILE *file;
 
-	if ( (file=fopen(filename, "w")) == NULL )
-	{
-		OUTPUT_ERROR("Couldn't open file for writing:\n\t%s\n",filename);
+	if ((file = fopen(filename, "w")) == NULL) {
+		OUTPUT_ERROR("Couldn't open file for writing:\n\t%s\n", filename);
 		exit(1);
 	}
 	fwrite(datablock->data, sizeof(char), datablock->length, file);
@@ -233,9 +202,8 @@ struct DataBlock *FetchHostKey(void)
 
 void FreeDataBlock(struct DataBlock *datablock)
 {
-	if ( datablock ) {
-		if ( datablock->data )
-		{
+	if (datablock) {
+		if (datablock->data) {
 			free(datablock->data);
 		}
 		free(datablock);
