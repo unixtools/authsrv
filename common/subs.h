@@ -20,4 +20,12 @@ char *get_fqdn(void);
 char *check_element(char *str);
 char *check_content(char *str);
 
+#ifdef WINDOWS
+#  define OUTPUT_ERROR(...) fprintf(stderr, __VA_ARGS__)
+#else
+#  define OUTPUT_ERROR(...) if(isatty(fileno(stderr))){ \
+    fprintf(stderr, __VA_ARGS__); } else { \
+    syslog(LOG_ERR, __VA_ARGS__); }
+#endif
+
 #define MAX_DATA_LEN 32000

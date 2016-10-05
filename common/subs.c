@@ -197,7 +197,7 @@ struct DataBlock *FileToDataBlock(char *filename)
 
 	if ( (file=fopen(filename, "r")) == NULL )
 	{
-		fprintf(stderr, "Couldn't open file for reading:\n\t%s\n",filename);
+		OUTPUT_ERROR("Couldn't open file for reading:\n\t%s\n",filename);
 		exit(1);
 	}
 
@@ -216,7 +216,7 @@ void DataBlockToFile(char *filename, struct DataBlock *datablock)
 
 	if ( (file=fopen(filename, "w")) == NULL )
 	{
-		fprintf(stderr, "Couldn't open file for writing:\n\t%s\n",filename);
+		OUTPUT_ERROR("Couldn't open file for writing:\n\t%s\n",filename);
 		exit(1);
 	}
 	fwrite(datablock->data, sizeof(char), datablock->length, file);

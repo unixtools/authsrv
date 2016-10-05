@@ -9,6 +9,7 @@
 #endif
 #include <fcntl.h>
 #include <errno.h>
+#include <syslog.h>
 #include <openssl/blowfish.h>
 #include "authsrv.h"
 #include "subs.h"
@@ -49,36 +50,36 @@ int main(int argc, char *argv[])
 	/* Check if valid */
 	if ( !owner || !user || !instance )
 	{
-		fprintf(stderr, "Invalid parameters.\n");
+		OUTPUT_ERROR( "Invalid parameters.\n");
 		exit(1);
 	}
 
     if ( check_element(owner) )
     {
-        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        OUTPUT_ERROR( "error on owner: %s\n", check_element(owner));
         exit(1);
     }
     if ( check_element(user) )
     {
-        fprintf(stderr, "error on user: %s\n", check_element(user));
+        OUTPUT_ERROR( "error on user: %s\n", check_element(user));
         exit(1);
     }
     if ( check_element(instance) )
     {
-        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        OUTPUT_ERROR( "error on instance: %s\n", check_element(instance));
         exit(1);
     }
 
 #ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
-		fprintf(stderr, "couldn't get real username\n");
+		OUTPUT_ERROR( "couldn't get real username\n");
 		exit(1);
 	}
 
 	if ( getuid() != 0 && strcmp(owner,userpw->pw_name) )
 	{
-		fprintf(stderr, "owner does not match and you are not root\n");
+		OUTPUT_ERROR( "owner does not match and you are not root\n");
 		exit(1);
 	}
 #else
@@ -106,13 +107,13 @@ int main(int argc, char *argv[])
 
 	if ( curlen == 0 )
 	{
-		fprintf(stderr, "error on password: must be specified\n");
+		OUTPUT_ERROR( "error on password: must be specified\n");
 		exit(1);
 	}
         
 	if ( check_content(passwd) )
 	{
-		fprintf(stderr, "error on password: %s\n", check_content(passwd));
+		OUTPUT_ERROR( "error on password: %s\n", check_content(passwd));
 		exit(1);
 	}
 	
@@ -131,7 +132,7 @@ int main(int argc, char *argv[])
         owner);
 	if ( MKDIR(filename, 0755) == -1 && errno != EEXIST )
 	{
-		fprintf(stderr, "couldn't create dir (%s)\n", filename);
+		OUTPUT_ERROR( "couldn't create dir (%s)\n", filename);
 		exit(1);
 	}
 
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
         owner, user);
 	if ( MKDIR(filename, 0755) == -1 && errno != EEXIST )
 	{
-		fprintf(stderr, "couldn't create dir (%s)\n", filename);
+		OUTPUT_ERROR( "couldn't create dir (%s)\n", filename);
 		exit(1);
 	}
 

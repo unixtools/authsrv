@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <syslog.h>
 #include "authsrv.h"
 #include "subs.h"
 
@@ -31,23 +32,23 @@ int main(int argc, char *argv[])
 	/* Check if valid */
 	if ( !owner || !user || !instance )
 	{
-		fprintf(stderr, "Invalid parameters.\n");
+		OUTPUT_ERROR( "Invalid parameters.\n");
 		exit(1);
 	}
 
     if ( check_element(owner) )
     {
-        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        OUTPUT_ERROR( "error on owner: %s\n", check_element(owner));
         exit(1);
     }
     if ( check_element(user) )
     {
-        fprintf(stderr, "error on user: %s\n", check_element(user));
+        OUTPUT_ERROR( "error on user: %s\n", check_element(user));
         exit(1);
     }
     if ( check_element(instance) )
     {
-        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        OUTPUT_ERROR( "error on instance: %s\n", check_element(instance));
         exit(1);
     }
 

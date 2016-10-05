@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <syslog.h>
 #include "authsrv.h"
 #include "subs.h"
 
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
 #ifndef WINDOWS
 	if ( !(userpw = getpwuid(getuid())) )
 	{
-		fprintf(stderr, "couldn't get real username\n");
+		OUTPUT_ERROR( "couldn't get real username\n");
 		exit(1);
 	}
 #endif
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
 
     if ( getuid() != 0 && owner && strcmp(owner,userpw->pw_name) )
     {
-        fprintf(stderr, "owner does not match and you are not root\n");
+        OUTPUT_ERROR( "owner does not match and you are not root\n");
         exit(1);
     }
 #else
@@ -77,17 +78,17 @@ int main(int argc, char *argv[])
 
     if ( owner && check_element(owner) )
     {
-        fprintf(stderr, "error on owner: %s\n", check_element(owner));
+        OUTPUT_ERROR( "error on owner: %s\n", check_element(owner));
         exit(1);
     }
     if ( user && check_element(user) )
     {
-        fprintf(stderr, "error on user: %s\n", check_element(user));
+        OUTPUT_ERROR( "error on user: %s\n", check_element(user));
         exit(1);
     }
     if ( instance && check_element(instance) )
     {
-        fprintf(stderr, "error on instance: %s\n", check_element(instance));
+        OUTPUT_ERROR( "error on instance: %s\n", check_element(instance));
         exit(1);
     }
 
