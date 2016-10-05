@@ -31,6 +31,7 @@ dist: clean
 	rm -rf /tmp/authsrv-$(VERSION)
 
 deb: dist
+	rm -f ../authsrv_$(VERSION).orig.tar.gz
 	ln ../authsrv-$(VERSION).tar.gz ../authsrv_$(VERSION).orig.tar.gz
-	dpkg-buildpackage 
+	dpkg-buildpackage -us -uc
 	rm -f ../authsrv_$(VERSION).orig.tar.gz
