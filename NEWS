@@ -1,3 +1,6 @@
+v3.1.1:
+	Reduced stderr output if not a tty
+
 v3.1.0: 
 	Removed authsrv-auth kerberos integration
 	Fixed windows uninstaller. 

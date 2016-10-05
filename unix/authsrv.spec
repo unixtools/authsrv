@@ -1,7 +1,7 @@
 
 Summary: AuthSrv Tool
 Name: authsrv
-Version: 3.1.0
+Version: 3.1.1
 Release: 1%{?dist}
 License: Perl Artistic License
 Group: System Environment/Base

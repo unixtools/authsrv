@@ -1,3 +1,9 @@
+authsrv (3.1.1-1) unstable; urgency=low
+
+  * generated build
+
+ -- Nathan Neulinger <nneul@neulinger.org>  Wed, 05 Oct 2016 09:00:00 -0600
+
 authsrv (3.1.0-1) unstable; urgency=low
 
   * generated build
