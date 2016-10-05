@@ -32,22 +32,26 @@ int main(int argc, char *argv[])
 	/* Check if valid */
 	if ( !owner || !user || !instance )
 	{
+        Log("error-params", owner, user, instance);
 		OUTPUT_ERROR( "Invalid parameters.\n");
 		exit(1);
 	}
 
     if ( check_element(owner) )
     {
+        Log("error-owner", owner, user, instance);
         OUTPUT_ERROR( "error on owner: %s\n", check_element(owner));
         exit(1);
     }
     if ( check_element(user) )
     {
+        Log("error-user", owner, user, instance);
         OUTPUT_ERROR( "error on user: %s\n", check_element(user));
         exit(1);
     }
     if ( check_element(instance) )
     {
+        Log("error-instance", owner, user, instance);
         OUTPUT_ERROR( "error on instance: %s\n", check_element(instance));
         exit(1);
     }
