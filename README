@@ -60,7 +60,19 @@ Build the installer
 	Browse to C:/work in windows UI
 	Right click on the NSI file in authsrv/windows/authsrv.nsi and choose to compile
 	or run the 'makeinstaller.bat' file
-	
+
+
+Linux Builds:
+-------------
+Install has a dependency on libopenssl-devel, so please install that first.
+Check out and build authsrv
+
+cd /work
+git clone https://github.com/unixtools/authsrv
+cd authsrv
+make
+sudo make install
+sudo make key
 
 
 Devel Notes:
