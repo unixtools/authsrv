@@ -22,6 +22,13 @@ clean:
 	fi
 	rm -rf debian/authsrv debian/tmp debian/authsrv.substvars debian/files
 
+key:
+	if test -f /bin/make.exe; then \
+		cd windows && $(MAKE) key; \
+	else \
+		cd unix && $(MAKE) key; \
+	fi
+
 dist: clean
 	rm -rf /tmp/authsrv-$(VERSION)
 	mkdir /tmp/authsrv-$(VERSION)
