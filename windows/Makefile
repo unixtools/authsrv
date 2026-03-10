@@ -3,7 +3,7 @@ DATADIR=C:\\\\authsrv
 
 LIBS = -L/lib -lssl -lcrypto -static
 INC = -I../common
-CC = gcc -g -O2 -Wall -DWINDOWS
+CC = i686-w64-mingw32-gcc -g -O2 -Wall -DWINDOWS
 
 all: authsrv-encrypt authsrv-decrypt authsrv-raw-encrypt authsrv-raw-decrypt authsrv-delete authsrv-list
 

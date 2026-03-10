@@ -8,7 +8,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#ifndef WINDOWS
 #include <syslog.h>
+#endif
 #include "authsrv.h"
 #include "subs.h"
 

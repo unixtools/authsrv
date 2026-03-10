@@ -5,7 +5,9 @@
 #ifndef WINDOWS
 #include <pwd.h>
 #endif
+#ifndef WINDOWS
 #include <syslog.h>
+#endif
 #include <openssl/blowfish.h>
 #include "authsrv.h"
 #include "subs.h"

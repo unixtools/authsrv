@@ -9,7 +9,9 @@
 #endif
 #include <fcntl.h>
 #include <errno.h>
+#ifndef WINDOWS
 #include <syslog.h>
+#endif
 #include <openssl/blowfish.h>
 #include "authsrv.h"
 #include "subs.h"
